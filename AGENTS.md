@@ -15,9 +15,14 @@ facts and decisions belong in `PROJECT_NOTES.md`.
 
 - Before presenting or running any executable command, first explain what it
   does and what effects it may have.
-- Commits and pushes are done only by the user. Prepare and test changes and
-  suggest branch names and commit messages, but never run `git commit` or
-  `git push`.
+- The assistant may create branches and stage changes (`git add`), and
+  proposes the commit subject — but never runs `git commit` or `git push`.
+  The user reviews the staged diff and commits/pushes themselves.
+- Naming convention: branch `<type>/<short-desc>`, all lowercase,
+  hyphen-separated; allowed types: `chore`, `feature`, `bugfix`, `hotfix`.
+  Commit subject is the description without the type segment (branch
+  `chore/refactor-sth` -> commit `refactor sth`); body only when the why is
+  not obvious from the diff. Work never lands directly on `main`.
 - When the user adds GitHub code review comments, read and discuss them with
   the user in the local console first. Apply agreed changes locally, test,
   and summarize. Do not publish GitHub comments unless explicitly asked.

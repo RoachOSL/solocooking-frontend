@@ -1,0 +1,5 @@
+# Force LF everywhere so Prettier, git and CI (Linux) agree on line endings,
+# regardless of core.autocrlf on Windows checkouts.
+* text=auto eol=lf
+
+*.png binary
