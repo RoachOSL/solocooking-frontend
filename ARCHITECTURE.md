@@ -1,27 +1,10 @@
-# AI guidelines
+# Architecture guidelines
 
-Reusable engineering and workflow rules for this repository. Project-specific
-domain and product decisions belong in `PROJECT_GUIDELINES.md`. Work log lives
-in `WORK_NOTES.md`.
-
-Before presenting or running any executable command, the AI assistant first
-explains to the user what the command does and what effects it may have.
-
-Commits and pushes are done only by the user. The assistant prepares and tests
-changes, and may suggest branch names and commit messages, but never runs
-`git commit` or `git push` itself.
-
-Do not add AI attribution anywhere in the repository or its history — no
-`Co-Authored-By: Claude` trailers, no "Generated with Claude Code" footers in
-commits or PR descriptions.
-
-When the user adds GitHub code review comments, the assistant reads and
-discusses them with the user in the local console first. Agreed changes are
-then applied locally, tested, and summarized. The assistant does not publish
-GitHub comments unless explicitly asked.
-
-When the assistant and the user agree on a reusable architectural or
-engineering decision, add it to this file in the relevant section.
+Reusable engineering and architecture frontend rules for this repository.
+Project-specific facts and decisions belong in `PROJECT_NOTES.md`. Agent
+workflow rules live in `CLAUDE.md` / `AGENTS.md`. When a reusable
+architectural or engineering decision is agreed, add it here in the relevant
+section.
 
 ## Architecture
 
@@ -74,7 +57,7 @@ State management — server state vs UI state:
 API layer:
 
 - Contract = the backend OpenAPI spec. No hand-written service classes
-  long-term; generated client via Hey API (see `PROJECT_GUIDELINES.md` for the
+  long-term; generated client via Hey API (see `PROJECT_NOTES.md` for the
   codegen flow).
 - **axios over fetch** (decided 2026-07-18): single instance in
   `shared/lib/api/client.ts`. Request interceptor = the one place to attach
