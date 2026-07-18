@@ -8,5 +8,11 @@ import { defineConfig } from '@hey-api/openapi-ts'
 export default defineConfig({
   input: 'openapi.json',
   output: 'src/shared/lib/api/__generated__',
-  plugins: ['@hey-api/client-axios', '@tanstack/react-query'],
+  plugins: [
+    {
+      name: '@hey-api/client-axios',
+      runtimeConfigPath: './src/shared/lib/api/hey-api.ts',
+    },
+    '@tanstack/react-query',
+  ],
 })
