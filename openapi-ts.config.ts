@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import { defineConfig } from '@hey-api/openapi-ts'
 
 // Generates from the committed spec snapshot (openapi.json) so codegen works

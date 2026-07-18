@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import { Link, Outlet } from 'react-router'
 
 export default function App() {

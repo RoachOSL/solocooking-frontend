@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import { useState } from 'react'
 import { Link } from 'react-router'
 import {

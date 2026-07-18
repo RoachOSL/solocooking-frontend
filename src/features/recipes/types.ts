@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 // Mirror of backend recipe DTOs. Replaced by generated types after
 // `npm run generate`.
 

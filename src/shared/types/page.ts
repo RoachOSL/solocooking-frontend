@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 // Mirror of backend common.dto.PageResponse<T>.
 export interface PageMetadata {
   number: number

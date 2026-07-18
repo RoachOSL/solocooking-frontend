@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import { apiClient } from '@/shared/lib/api/client'
 import type { PageResponse } from '@/shared/types/page'
 import type { Recipe, RecipeSummary } from '../types'
@@ -16,9 +20,12 @@ export const recipeKeys = {
 export async function getRecipes(
   params: GetRecipesParams = {},
 ): Promise<PageResponse<RecipeSummary>> {
-  const { data } = await apiClient.get<PageResponse<RecipeSummary>>('/recipes', {
-    params,
-  })
+  const { data } = await apiClient.get<PageResponse<RecipeSummary>>(
+    '/recipes',
+    {
+      params,
+    },
+  )
   return data
 }
 

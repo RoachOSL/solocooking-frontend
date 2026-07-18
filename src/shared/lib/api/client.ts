@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import axios, { AxiosError } from 'axios'
 
 // Single axios instance for the whole app. Base URL is /api (Vite dev proxy
