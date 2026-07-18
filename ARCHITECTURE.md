@@ -109,6 +109,13 @@ Known traps (do not do):
   fix findings before presenting the change.
 - Keep components dumb where possible: data fetching lives in hooks, HTTP in
   `api/` modules — a component should not know about axios.
+- Comments are the exception, not the norm. Write one only when it states a
+  non-obvious constraint or reason the code itself cannot show (for example:
+  why a no-op interceptor exists, that a type mirrors a backend DTO, why a
+  lint rule is disabled for a path). Never narrate what the next line does,
+  restate a rule already documented in these md files, or leave tool/template
+  boilerplate links. Short section labels in config files (`# Test output` in
+  `.gitignore`) are fine.
 
 ## Test style
 

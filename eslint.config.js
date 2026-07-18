@@ -7,9 +7,6 @@ import tseslint from 'typescript-eslint'
 import eslintConfigPrettier from 'eslint-config-prettier'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
-// Proprietary license header stamped on every owned source file (autofixable).
-// Frontend equivalent of the backend's Spotless `licenseHeader`. Generated API
-// output is excluded via globalIgnores below.
 const LICENSE_HEADER = [
   '/*',
   ' * Copyright (c) 2026 dev.soloprogramming',

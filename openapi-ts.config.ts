@@ -4,9 +4,7 @@
 
 import { defineConfig } from '@hey-api/openapi-ts'
 
-// Generates from the committed spec snapshot (openapi.json) so codegen works
-// without a running backend. Refresh the snapshot with `npm run spec:update`
-// (requires the backend live at http://localhost:8080/api).
+// Reads the committed spec snapshot so codegen works without a running backend.
 export default defineConfig({
   input: 'openapi.json',
   output: 'src/shared/lib/api/__generated__',
