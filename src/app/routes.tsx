@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import { createBrowserRouter } from 'react-router'
 import App from './App'
 import { HomePage } from './HomePage'

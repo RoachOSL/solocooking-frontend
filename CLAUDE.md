@@ -18,9 +18,6 @@ facts and decisions belong in `PROJECT_NOTES.md`.
 - Commits and pushes are done only by the user. Prepare and test changes and
   suggest branch names and commit messages, but never run `git commit` or
   `git push`.
-- Do not add AI attribution anywhere in the repository or its history — no
-  `Co-Authored-By: Claude` trailers, no "Generated with Claude Code" footers
-  in commits or PR descriptions.
 - When the user adds GitHub code review comments, read and discuss them with
   the user in the local console first. Apply agreed changes locally, test,
   and summarize. Do not publish GitHub comments unless explicitly asked.

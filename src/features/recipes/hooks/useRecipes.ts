@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import { useQuery } from '@tanstack/react-query'
 import { getRecipes, recipeKeys, type GetRecipesParams } from '../api/recipes'
 

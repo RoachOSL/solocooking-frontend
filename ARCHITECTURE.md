@@ -6,6 +6,12 @@ workflow rules live in `CLAUDE.md` / `AGENTS.md`. When a reusable
 architectural or engineering decision is agreed, add it here in the relevant
 section.
 
+## Repository hygiene
+
+- Do not add AI attribution anywhere in the repository or its Git history.
+  Do not add AI co-author trailers, generation footers, or similar attribution
+  to commits, pull requests, source files, or documentation.
+
 ## Architecture
 
 Repository structure — feature-based colocation:
@@ -42,10 +48,10 @@ src/
 
 State management — server state vs UI state:
 
-| State | Owner | Examples |
-|---|---|---|
-| Server / async | TanStack Query v5 | recipe list, recipe detail, auth user |
-| Local / UI | `useState` + `useContext` | modal open, form inputs, filters |
+| State          | Owner                     | Examples                              |
+| -------------- | ------------------------- | ------------------------------------- |
+| Server / async | TanStack Query v5         | recipe list, recipe detail, auth user |
+| Local / UI     | `useState` + `useContext` | modal open, form inputs, filters      |
 
 - Server data is **cache**, not app state. Never copy query data into
   `useState`/Context/Redux.
@@ -103,6 +109,13 @@ Known traps (do not do):
   fix findings before presenting the change.
 - Keep components dumb where possible: data fetching lives in hooks, HTTP in
   `api/` modules — a component should not know about axios.
+- Comments are the exception, not the norm. Write one only when it states a
+  non-obvious constraint or reason the code itself cannot show (for example:
+  why a no-op interceptor exists, that a type mirrors a backend DTO, why a
+  lint rule is disabled for a path). Never narrate what the next line does,
+  restate a rule already documented in these md files, or leave tool/template
+  boilerplate links. Short section labels in config files (`# Test output` in
+  `.gitignore`) are fine.
 
 ## Test style
 
@@ -113,3 +126,33 @@ Known traps (do not do):
 - Priorities: hooks with logic > forms and validation > API hooks via MSW >
   critical flows. Skip snapshot/styling tests and dumb display components.
 - Playwright e2e: later, 3–5 happy paths in CI only.
+- No unit/integration split on the frontend (unlike the backend's Gradle
+  `test` vs `integrationTest`). Following the Testing Trophy, the
+  Vitest/RTL/MSW suite already _is_ the integration layer — it drives the real
+  request path through mocked HTTP in one fast run. Split into a separate CI
+  job only when Playwright e2e lands.
+
+## CI and quality gates
+
+- Every owned source file carries a proprietary copyright header, enforced in
+  CI and autofixable locally (ESLint `license-header/header`). Generated output
+  is excluded. This is the frontend equivalent of the backend's Spotless
+  `licenseHeader`; concrete header text and exclusions live in
+  `PROJECT_NOTES.md`.
+- CI runs on every PR and on push to `main`. Fast checks (format, lint) and the
+  test suite run as **parallel jobs**; the build job gates on both. Each job
+  pays its own checkout + dependency install, so parallelize independent checks
+  rather than chaining every step — chain only true dependencies (build needs
+  green checks first).
+- Use a `concurrency` group per ref with `cancel-in-progress: true` so a newer
+  push on the same branch cancels the in-flight run for the older commit.
+  Different branches keep separate runs; this only stops wasted work on
+  superseded commits and stale results.
+- Pin **all** GitHub Actions — official `actions/*` included — to a full
+  commit SHA with a version comment, never a mutable tag
+  (`uses: actions/checkout@<full-sha> # v5.0.1`). A tag is a movable pointer:
+  the action owner can repoint it and the workflow silently starts executing
+  different code with access to the repo token (supply-chain vector).
+  Upgrading an action = consciously bumping the SHA in a reviewed diff.
+- CI never needs a running backend: the OpenAPI snapshot and generated client
+  are committed, and tests mock HTTP with MSW.

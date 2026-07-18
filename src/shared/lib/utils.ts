@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 

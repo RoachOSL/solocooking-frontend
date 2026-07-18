@@ -1,12 +1,8 @@
-import axios, { AxiosError } from 'axios'
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
 
-// Single axios instance for the whole app. Base URL is /api (Vite dev proxy
-// points it at the Spring Boot backend on :8080).
-//
-// NOTE: once the backend is running, `npm run generate` produces the official
-// Hey API client into ./__generated__ (configured with the axios plugin so it
-// reuses this instance). This module is the interim, same-shape stand-in so the
-// app builds and runs now.
+import axios, { AxiosError } from 'axios'
 
 export const API_BASE_URL = '/api'
 

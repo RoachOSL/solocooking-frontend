@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import { useParams } from 'react-router'
 
 export function RecipeDetailPage() {

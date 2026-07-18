@@ -24,13 +24,32 @@ repository here.
 - Until the first `spec:update` + `generate`, hand-written typed API modules
   matching the Hey API shape live in `features/*/api`.
 
+## CI / licensing
+
+- Proprietary `LICENSE` (same text as backend). Every owned `src/**/*.{ts,tsx}`
+  file carries a copyright header enforced by ESLint
+  (`eslint-plugin-license-header`, rule `license-header/header`, autofixable
+  with `eslint --fix`). Generated API output under
+  `src/shared/lib/api/__generated__` is excluded. Frontend equivalent of the
+  backend's Spotless `licenseHeader`.
+- GitHub Actions `.github/workflows/ci.yml`: `code-quality`
+  (`format:check` + `lint`) and `tests` (`test:ci`) run in parallel, `build`
+  gates on both. `concurrency` cancels superseded runs. No unit/integration
+  split — on the frontend the Vitest+RTL+MSW suite is already the integration
+  layer (Testing Trophy); a separate job is added only when Playwright e2e
+  lands.
+- `test:ci` writes `test-results/junit.xml` (gitignored); the `tests` job
+  publishes it via `dorny/test-reporter` (`reporter: jest-junit`, Vitest's
+  junit output is jest-compatible). Third-party actions are pinned to a full
+  commit SHA with a version comment, never a mutable tag.
+
 ## Decisions queued for later (with leaning)
 
-| When | Decision | Leaning |
-|---|---|---|
-| Create-recipe form | form library | react-hook-form + zod (schema validation, free types) |
-| Auth | token storage | httpOnly cookie > localStorage (XSS); interceptor ready |
-| UI state pain | store | Zustand, smallest possible |
-| Deploy | hosting | static hosting + reverse proxy `/api`; `VITE_API_URL` only if proxy stops sufficing |
-| Errors | UX | route-level Error Boundaries + global Query error handler |
-| i18n | PL/EN | undecided; do not hardcode-scatter strings in shared components |
+| When               | Decision      | Leaning                                                                             |
+| ------------------ | ------------- | ----------------------------------------------------------------------------------- |
+| Create-recipe form | form library  | react-hook-form + zod (schema validation, free types)                               |
+| Auth               | token storage | httpOnly cookie > localStorage (XSS); interceptor ready                             |
+| UI state pain      | store         | Zustand, smallest possible                                                          |
+| Deploy             | hosting       | static hosting + reverse proxy `/api`; `VITE_API_URL` only if proxy stops sufficing |
+| Errors             | UX            | route-level Error Boundaries + global Query error handler                           |
+| i18n               | PL/EN         | undecided; do not hardcode-scatter strings in shared components                     |

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import { Link } from 'react-router'
 import { Button } from '@/shared/components/ui/button'
 

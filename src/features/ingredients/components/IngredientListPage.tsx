@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 export function IngredientListPage() {
   return (
     <section className="mx-auto max-w-5xl p-6">

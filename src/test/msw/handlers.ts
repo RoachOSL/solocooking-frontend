@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import { http, HttpResponse } from 'msw'
 import type { PageResponse } from '@/shared/types/page'
 import type { RecipeSummary } from '@/features/recipes'

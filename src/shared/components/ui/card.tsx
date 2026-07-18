@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2026 dev.soloprogramming
+ */
+
 import * as React from 'react'
 
 import { cn } from '@/shared/lib/utils'
