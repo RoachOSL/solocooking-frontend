@@ -1,73 +1,52 @@
-# React + TypeScript + Vite
+# SoloCooking Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React SPA for the SoloCooking recipe app. Talks to the Spring Boot backend
+(`../solocooking`) through a generated OpenAPI client.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+React 19, Vite 8, TypeScript, TanStack Query v5, React Router v7 (library
+mode), Tailwind CSS v4, shadcn/ui, axios, Vitest + React Testing Library +
+MSW. Architecture rules live in `ARCHITECTURE.md`, project-specific facts in
+`PROJECT_NOTES.md`.
 
-## React Compiler
+## Requirements
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node 24 (see `.nvmrc`; `nvm use` picks it up)
+- Backend running on `http://localhost:8080` — only for live data and
+  `npm run spec:update`; dev server, tests and build work without it
 
-## Expanding the ESLint configuration
+## Getting started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm ci
+npm run dev        # http://localhost:5173, /api proxied to :8080
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Script                 | What it does                                              |
+| ---------------------- | --------------------------------------------------------- |
+| `npm run dev`          | dev server with HMR, `/api` proxy to the backend          |
+| `npm run build`        | typecheck (`tsc -b`) + production build to `dist/`        |
+| `npm test`             | Vitest run (MSW mocks HTTP — no backend needed)           |
+| `npm run test:watch`   | Vitest in watch mode                                      |
+| `npm run lint`         | ESLint (includes license header check)                    |
+| `npm run format`       | Prettier write                                            |
+| `npm run format:check` | Prettier check (CI)                                       |
+| `npm run spec:update`  | refresh `openapi.json` from the live backend              |
+| `npm run generate`     | generate the API client from the committed `openapi.json` |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## API codegen
+
+The OpenAPI spec snapshot (`openapi.json`) is committed. `npm run generate`
+(Hey API) writes the typed client to `src/shared/lib/api/__generated__` and
+reuses the shared axios instance from `src/shared/lib/api/client.ts`, so
+interceptors apply to generated calls. Refresh the snapshot with
+`npm run spec:update` whenever the backend contract changes.
+
+## Testing
+
+Vitest + React Testing Library, HTTP mocked at the network level with MSW
+(`src/test/msw`). Unmocked requests fail loudly. See `ARCHITECTURE.md` for
+test priorities.

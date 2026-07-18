@@ -18,7 +18,7 @@ const PAGE_SIZE = 20
 
 export function RecipeListPage() {
   const [page, setPage] = useState(0)
-  const { data, isPending, isError, error } = useRecipes({
+  const { data, isPending, isError, error, refetch } = useRecipes({
     page,
     size: PAGE_SIZE,
   })
@@ -30,9 +30,12 @@ export function RecipeListPage() {
       {isPending && <p className="text-muted-foreground">Loading recipes…</p>}
 
       {isError && (
-        <p className="text-destructive">
-          Failed to load recipes: {error.message}
-        </p>
+        <div role="alert" className="space-y-3">
+          <p className="text-destructive">{error.message}</p>
+          <Button variant="outline" onClick={() => refetch()}>
+            Try again
+          </Button>
+        </div>
       )}
 
       {data && data.content.length === 0 && (

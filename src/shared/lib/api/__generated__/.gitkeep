@@ -1,3 +1,0 @@
-# Hey API generated client lands here after `npm run generate` (requires the
-# backend running at http://localhost:8080/api). Committed to git so CI can diff
-# schema changes.

@@ -2,7 +2,8 @@
  * Copyright (c) 2026 dev.soloprogramming
  */
 
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
+import { toAppError } from './errors'
 
 export const API_BASE_URL = '/api'
 
@@ -20,10 +21,11 @@ apiClient.interceptors.request.use((config) => {
   return config
 })
 
-// Response interceptor — normalize errors. Extend later for 401 refresh.
+// Response interceptor — normalize errors to AppError. Extend later for 401
+// refresh.
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => Promise.reject(error),
+  (error: unknown) => Promise.reject(toAppError(error)),
 )
 
 // Placeholder until the auth feature exists.
