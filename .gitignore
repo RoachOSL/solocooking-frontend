@@ -15,8 +15,6 @@ dist-ssr
 # Local AI assistants
 .claude/
 ai-notes/
-CLAUDE.md
-AGENTS.md
 
 # Editor directories and files
 .vscode/*
