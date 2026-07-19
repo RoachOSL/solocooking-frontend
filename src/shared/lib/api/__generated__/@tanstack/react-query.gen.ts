@@ -4,8 +4,8 @@ import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOption
 import type { AxiosError } from 'axios';
 
 import { client } from '../client.gen';
-import { create, create1, deleteById, getIngredient, getIngredients, getRecipe, getRecipes, type Options } from '../sdk.gen';
-import type { Create1Data, Create1Response, CreateData, CreateResponse, DeleteByIdData, DeleteByIdResponse, GetIngredientData, GetIngredientResponse, GetIngredientsData, GetIngredientsResponse, GetRecipeData, GetRecipeResponse, GetRecipesData, GetRecipesResponse } from '../types.gen';
+import { createIngredient, createRecipe, deleteRecipe, getIngredient, getIngredients, getRecipe, getRecipes, type Options } from '../sdk.gen';
+import type { CreateIngredientData, CreateIngredientResponse, CreateRecipeData, CreateRecipeResponse, DeleteRecipeData, DeleteRecipeResponse, GetIngredientData, GetIngredientResponse, GetIngredientsData, GetIngredientsResponse, GetRecipeData, GetRecipeResponse, GetRecipesData, GetRecipesResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseURL' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -124,10 +124,10 @@ export const getRecipesInfiniteOptions = (options?: Options<GetRecipesData>) => 
 /**
  * Creates new recipe
  */
-export const createMutation = (options?: Partial<Options<CreateData>>): UseMutationOptions<CreateResponse, AxiosError<DefaultError>, Options<CreateData>> => {
-    const mutationOptions: UseMutationOptions<CreateResponse, AxiosError<DefaultError>, Options<CreateData>> = {
+export const createRecipeMutation = (options?: Partial<Options<CreateRecipeData>>): UseMutationOptions<CreateRecipeResponse, AxiosError<DefaultError>, Options<CreateRecipeData>> => {
+    const mutationOptions: UseMutationOptions<CreateRecipeResponse, AxiosError<DefaultError>, Options<CreateRecipeData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await create({
+            const { data } = await createRecipe({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -189,10 +189,10 @@ export const getIngredientsInfiniteOptions = (options?: Options<GetIngredientsDa
 /**
  * Creates new ingredient
  */
-export const create1Mutation = (options?: Partial<Options<Create1Data>>): UseMutationOptions<Create1Response, AxiosError<DefaultError>, Options<Create1Data>> => {
-    const mutationOptions: UseMutationOptions<Create1Response, AxiosError<DefaultError>, Options<Create1Data>> = {
+export const createIngredientMutation = (options?: Partial<Options<CreateIngredientData>>): UseMutationOptions<CreateIngredientResponse, AxiosError<DefaultError>, Options<CreateIngredientData>> => {
+    const mutationOptions: UseMutationOptions<CreateIngredientResponse, AxiosError<DefaultError>, Options<CreateIngredientData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await create1({
+            const { data } = await createIngredient({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -205,11 +205,13 @@ export const create1Mutation = (options?: Partial<Options<Create1Data>>): UseMut
 
 /**
  * Delete recipe by id
+ *
+ * Deletes the recipe when it exists. Repeated requests return no content.
  */
-export const deleteByIdMutation = (options?: Partial<Options<DeleteByIdData>>): UseMutationOptions<DeleteByIdResponse, AxiosError<DefaultError>, Options<DeleteByIdData>> => {
-    const mutationOptions: UseMutationOptions<DeleteByIdResponse, AxiosError<DefaultError>, Options<DeleteByIdData>> = {
+export const deleteRecipeMutation = (options?: Partial<Options<DeleteRecipeData>>): UseMutationOptions<DeleteRecipeResponse, AxiosError<DefaultError>, Options<DeleteRecipeData>> => {
+    const mutationOptions: UseMutationOptions<DeleteRecipeResponse, AxiosError<DefaultError>, Options<DeleteRecipeData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await deleteById({
+            const { data } = await deleteRecipe({
                 ...options,
                 ...fnOptions,
                 throwOnError: true

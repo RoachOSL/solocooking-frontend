@@ -70,8 +70,13 @@ API layer:
   the JWT once auth lands; response interceptor reserved for 401 refresh.
   Hey API uses the `@hey-api/client-axios` plugin so generated code shares
   the instance.
-- Query key factories (`recipeKeys` pattern in `features/*/api`) until the
-  generated TanStack Query options take over.
+- Query keys and query options come from the generated
+  `@tanstack/react-query.gen` output; feature hooks wrap them
+  (`useQuery(getRecipesOptions(...))`). No hand-written query key factories.
+- The generated client must use a **relative** `baseURL` (`/api`). The spec's
+  server URL is relative already; `shared/lib/api/hey-api.ts` additionally
+  pins it, because an absolute URL would bypass the Vite dev proxy and MSW's
+  relative path matching.
 
 UI and styling — Tailwind v4 + shadcn/ui:
 
