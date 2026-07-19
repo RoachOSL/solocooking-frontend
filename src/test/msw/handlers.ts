@@ -3,14 +3,16 @@
  */
 
 import { http, HttpResponse } from 'msw'
-import type { PageResponse } from '@/shared/types/page'
-import type { RecipeSummary } from '@/features/recipes'
+import type {
+  PageResponseRecipeSummaryDto,
+  RecipeSummaryDto,
+} from '@/shared/lib/api/__generated__'
 
-const recipes: RecipeSummary[] = [
+const recipes: RecipeSummaryDto[] = [
   {
     id: '11111111-1111-1111-1111-111111111111',
     name: 'Pancakes',
-    imageUrl: null,
+    imageUrl: 'https://example.com/pancakes.jpg',
     description: 'Fluffy breakfast pancakes',
     updatedAt: '2026-07-01T10:00:00Z',
     createdAt: '2026-07-01T10:00:00Z',
@@ -18,7 +20,7 @@ const recipes: RecipeSummary[] = [
   {
     id: '22222222-2222-2222-2222-222222222222',
     name: 'Tomato Soup',
-    imageUrl: null,
+    imageUrl: 'https://example.com/tomato-soup.jpg',
     description: 'Simple and warming',
     updatedAt: '2026-07-02T10:00:00Z',
     createdAt: '2026-07-02T10:00:00Z',
@@ -27,7 +29,7 @@ const recipes: RecipeSummary[] = [
 
 export const handlers = [
   http.get('/api/recipes', () => {
-    const body: PageResponse<RecipeSummary> = {
+    const body: PageResponseRecipeSummaryDto = {
       content: recipes,
       page: { number: 0, size: 20, totalElements: 2, totalPages: 1 },
     }

@@ -3,11 +3,11 @@
  */
 
 import { useQuery } from '@tanstack/react-query'
-import { getRecipes, recipeKeys, type GetRecipesParams } from '../api/recipes'
+import { getRecipesOptions } from '@/shared/lib/api/__generated__/@tanstack/react-query.gen'
+import type { GetRecipesData } from '@/shared/lib/api/__generated__'
+
+export type GetRecipesParams = NonNullable<GetRecipesData['query']>
 
 export function useRecipes(params: GetRecipesParams = {}) {
-  return useQuery({
-    queryKey: recipeKeys.list(params),
-    queryFn: () => getRecipes(params),
-  })
+  return useQuery(getRecipesOptions({ query: params }))
 }

@@ -1,11 +1,8 @@
 {
   "openapi": "3.1.0",
-  "info": { "title": "OpenAPI definition", "version": "v0" },
+  "info": { "title": "SoloCooking API", "version": "v1" },
   "servers": [
-    {
-      "url": "http://localhost:8080/api",
-      "description": "Generated server url"
-    }
+    { "url": "/api", "description": "Base API path for SoloCooking app" }
   ],
   "tags": [
     {
@@ -51,7 +48,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PageResponseRecipeSummaryDTO"
                 }
@@ -63,7 +60,7 @@
       "post": {
         "tags": ["recipe-controller"],
         "summary": "Creates new recipe",
-        "operationId": "create",
+        "operationId": "createRecipe",
         "requestBody": {
           "content": {
             "application/json": {
@@ -76,7 +73,9 @@
           "201": {
             "description": "Created",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/RecipeDTO" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RecipeDTO" }
+              }
             }
           }
         }
@@ -114,7 +113,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PageResponseIngredientDTO"
                 }
@@ -126,7 +125,7 @@
       "post": {
         "tags": ["ingredient-controller"],
         "summary": "Creates new ingredient",
-        "operationId": "create_1",
+        "operationId": "createIngredient",
         "requestBody": {
           "content": {
             "application/json": {
@@ -141,7 +140,7 @@
           "201": {
             "description": "Created",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": { "$ref": "#/components/schemas/IngredientDTO" }
               }
             }
@@ -167,7 +166,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/RecipeDTO" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RecipeDTO" }
+              }
             }
           }
         }
@@ -175,7 +176,8 @@
       "delete": {
         "tags": ["recipe-controller"],
         "summary": "Delete recipe by id",
-        "operationId": "deleteById",
+        "description": "Deletes the recipe when it exists. Repeated requests return no content.",
+        "operationId": "deleteRecipe",
         "parameters": [
           {
             "name": "recipeId",
@@ -204,7 +206,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": { "$ref": "#/components/schemas/IngredientDTO" }
               }
             }
@@ -277,7 +279,16 @@
           },
           "updatedAt": { "type": "string", "format": "date-time" },
           "createdAt": { "type": "string", "format": "date-time" }
-        }
+        },
+        "required": [
+          "createdAt",
+          "description",
+          "id",
+          "imageUrl",
+          "name",
+          "sections",
+          "updatedAt"
+        ]
       },
       "RecipeIngredientDTO": {
         "type": "object",
@@ -286,9 +297,10 @@
           "ingredientId": { "type": "string", "format": "uuid" },
           "amount": { "type": "number" },
           "unit": { "type": "string" },
-          "note": { "type": "string" },
+          "note": { "type": ["string", "null"] },
           "position": { "type": "integer", "format": "int32" }
-        }
+        },
+        "required": ["amount", "id", "ingredientId", "note", "position", "unit"]
       },
       "RecipeSectionDTO": {
         "type": "object",
@@ -300,7 +312,8 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/RecipeIngredientDTO" }
           }
-        }
+        },
+        "required": ["id", "ingredients", "name", "position"]
       },
       "CreateIngredientRequest": {
         "type": "object",
@@ -314,7 +327,8 @@
         "properties": {
           "id": { "type": "string", "format": "uuid" },
           "name": { "type": "string" }
-        }
+        },
+        "required": ["id", "name"]
       },
       "PageMetadata": {
         "type": "object",
@@ -323,7 +337,8 @@
           "size": { "type": "integer", "format": "int32" },
           "totalElements": { "type": "integer", "format": "int64" },
           "totalPages": { "type": "integer", "format": "int32" }
-        }
+        },
+        "required": ["number", "size", "totalElements", "totalPages"]
       },
       "PageResponseRecipeSummaryDTO": {
         "type": "object",
@@ -333,7 +348,8 @@
             "items": { "$ref": "#/components/schemas/RecipeSummaryDTO" }
           },
           "page": { "$ref": "#/components/schemas/PageMetadata" }
-        }
+        },
+        "required": ["content", "page"]
       },
       "RecipeSummaryDTO": {
         "type": "object",
@@ -344,7 +360,15 @@
           "description": { "type": "string" },
           "updatedAt": { "type": "string", "format": "date-time" },
           "createdAt": { "type": "string", "format": "date-time" }
-        }
+        },
+        "required": [
+          "createdAt",
+          "description",
+          "id",
+          "imageUrl",
+          "name",
+          "updatedAt"
+        ]
       },
       "PageResponseIngredientDTO": {
         "type": "object",
@@ -354,7 +378,8 @@
             "items": { "$ref": "#/components/schemas/IngredientDTO" }
           },
           "page": { "$ref": "#/components/schemas/PageMetadata" }
-        }
+        },
+        "required": ["content", "page"]
       }
     }
   }

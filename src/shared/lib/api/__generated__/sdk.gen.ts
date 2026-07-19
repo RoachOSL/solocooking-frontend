@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { Create1Data, Create1Responses, CreateData, CreateResponses, DeleteByIdData, DeleteByIdResponses, GetIngredientData, GetIngredientResponses, GetIngredientsData, GetIngredientsResponses, GetRecipeData, GetRecipeResponses, GetRecipesData, GetRecipesResponses } from './types.gen';
+import type { CreateIngredientData, CreateIngredientResponses, CreateRecipeData, CreateRecipeResponses, DeleteRecipeData, DeleteRecipeResponses, GetIngredientData, GetIngredientResponses, GetIngredientsData, GetIngredientsResponses, GetRecipeData, GetRecipeResponses, GetRecipesData, GetRecipesResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -23,12 +23,17 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
  *
  * Returns a paginated list of all available recipes
  */
-export const getRecipes = <ThrowOnError extends boolean = false>(options?: Options<GetRecipesData, ThrowOnError>): RequestResult<GetRecipesResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetRecipesResponses, unknown, ThrowOnError>({ url: '/recipes', ...options });
+export const getRecipes = <ThrowOnError extends boolean = false>(options?: Options<GetRecipesData, ThrowOnError>): RequestResult<GetRecipesResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetRecipesResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/recipes',
+    ...options
+});
 
 /**
  * Creates new recipe
  */
-export const create = <ThrowOnError extends boolean = false>(options: Options<CreateData, ThrowOnError>): RequestResult<CreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateResponses, unknown, ThrowOnError>({
+export const createRecipe = <ThrowOnError extends boolean = false>(options: Options<CreateRecipeData, ThrowOnError>): RequestResult<CreateRecipeResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateRecipeResponses, unknown, ThrowOnError>({
+    responseType: 'json',
     url: '/recipes',
     ...options,
     headers: {
@@ -40,12 +45,17 @@ export const create = <ThrowOnError extends boolean = false>(options: Options<Cr
 /**
  * Get all ingredients
  */
-export const getIngredients = <ThrowOnError extends boolean = false>(options?: Options<GetIngredientsData, ThrowOnError>): RequestResult<GetIngredientsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetIngredientsResponses, unknown, ThrowOnError>({ url: '/ingredients', ...options });
+export const getIngredients = <ThrowOnError extends boolean = false>(options?: Options<GetIngredientsData, ThrowOnError>): RequestResult<GetIngredientsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetIngredientsResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/ingredients',
+    ...options
+});
 
 /**
  * Creates new ingredient
  */
-export const create1 = <ThrowOnError extends boolean = false>(options: Options<Create1Data, ThrowOnError>): RequestResult<Create1Responses, unknown, ThrowOnError> => (options.client ?? client).post<Create1Responses, unknown, ThrowOnError>({
+export const createIngredient = <ThrowOnError extends boolean = false>(options: Options<CreateIngredientData, ThrowOnError>): RequestResult<CreateIngredientResponses, unknown, ThrowOnError> => (options.client ?? client).post<CreateIngredientResponses, unknown, ThrowOnError>({
+    responseType: 'json',
     url: '/ingredients',
     ...options,
     headers: {
@@ -56,17 +66,27 @@ export const create1 = <ThrowOnError extends boolean = false>(options: Options<C
 
 /**
  * Delete recipe by id
+ *
+ * Deletes the recipe when it exists. Repeated requests return no content.
  */
-export const deleteById = <ThrowOnError extends boolean = false>(options: Options<DeleteByIdData, ThrowOnError>): RequestResult<DeleteByIdResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeleteByIdResponses, unknown, ThrowOnError>({ url: '/recipes/{recipeId}', ...options });
+export const deleteRecipe = <ThrowOnError extends boolean = false>(options: Options<DeleteRecipeData, ThrowOnError>): RequestResult<DeleteRecipeResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeleteRecipeResponses, unknown, ThrowOnError>({ url: '/recipes/{recipeId}', ...options });
 
 /**
  * Get recipe by id
  *
  * Returns a recipe for given id
  */
-export const getRecipe = <ThrowOnError extends boolean = false>(options: Options<GetRecipeData, ThrowOnError>): RequestResult<GetRecipeResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetRecipeResponses, unknown, ThrowOnError>({ url: '/recipes/{recipeId}', ...options });
+export const getRecipe = <ThrowOnError extends boolean = false>(options: Options<GetRecipeData, ThrowOnError>): RequestResult<GetRecipeResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetRecipeResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/recipes/{recipeId}',
+    ...options
+});
 
 /**
  * Get ingredient by id
  */
-export const getIngredient = <ThrowOnError extends boolean = false>(options: Options<GetIngredientData, ThrowOnError>): RequestResult<GetIngredientResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetIngredientResponses, unknown, ThrowOnError>({ url: '/ingredients/{ingredientId}', ...options });
+export const getIngredient = <ThrowOnError extends boolean = false>(options: Options<GetIngredientData, ThrowOnError>): RequestResult<GetIngredientResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetIngredientResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/ingredients/{ingredientId}',
+    ...options
+});

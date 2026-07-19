@@ -9,7 +9,7 @@ repository here.
 - Backend: Spring Boot, servlet path `/api`, local port 8080.
 - Endpoints `/recipes` and `/ingredients` are paginated via
   `PageResponse{content, page{number, size, totalElements, totalPages}}`
-  (mirrored in `src/shared/types/page.ts`).
+  (generated `PageResponse*Dto` types).
 - Dev CORS: Vite proxy `/api -> http://localhost:8080`. No CORS config on the
   backend. Production: reverse proxy serves the same path layout.
 
@@ -21,8 +21,12 @@ repository here.
   - `npm run generate` — Hey API reads the local snapshot; works offline.
   - Snapshot + generated output are committed, so PR diffs show contract
     changes and CI never needs a running Spring app.
-- Until the first `spec:update` + `generate`, hand-written typed API modules
-  matching the Hey API shape live in `features/*/api`.
+- Features consume the generated TanStack Query options directly; there are
+  no hand-written API modules.
+- Backend DTO schemas mark response fields as `required` and declare explicit
+  `operationId`s (`createRecipe`, `deleteRecipe`, ...), so generated types are
+  non-optional and generated names are stable — no defensive guards in the UI
+  for fields the contract guarantees.
 
 ## CI / licensing
 
