@@ -88,6 +88,12 @@ UI and styling — Tailwind v4 + shadcn/ui:
   `@/shared/*`.
 - Avoid mega component libraries (MUI/AntD): styling fights + upgrade
   lock-in are exactly what shadcn avoids.
+- Every page must be responsive (RWD): mobile-first layout with flex/grid and
+  relative units, no fixed pixel widths for layout, wrapping instead of
+  overflow (`flex-wrap`). Verify down to ~320 px viewport width.
+- Theme colors live exclusively in the design tokens in `src/index.css`
+  (`:root` + `.dark`); components reference tokens (`bg-primary`,
+  `text-muted-foreground`), never raw color values.
 
 Routing — React Router v7, library mode:
 
@@ -114,6 +120,9 @@ Known traps (do not do):
   fix findings before presenting the change.
 - Keep components dumb where possible: data fetching lives in hooks, HTTP in
   `api/` modules — a component should not know about axios.
+- Single responsibility (SRP): one component/hook/module does one thing.
+  Split a component when it accumulates a second concern (fetching + layout,
+  form + list), not when it merely gets long.
 - Comments are the exception, not the norm. Write one only when it states a
   non-obvious constraint or reason the code itself cannot show (for example:
   why a no-op interceptor exists, that a type mirrors a backend DTO, why a
