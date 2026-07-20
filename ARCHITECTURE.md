@@ -35,10 +35,14 @@ src/
       utils.ts          # cn()
     types/              # cross-feature contract types (PageResponse)
   app/                  # composition root: App, routes, providers, main
+    theme/              # palettes, theme hook, toggles, ember canvas
 ```
 
 - Something used by exactly one feature lives inside that feature. Move to
   `shared/` at the **second** consumer, not before (no premature abstraction).
+- `app/` holds the shell only. A cross-cutting concern that grows to three or
+  more files gets its own subfolder there rather than a `features/` entry with
+  a barrel — theming is app-wide plumbing, not a domain with its own data.
 - Never deep-import across features — only through the feature `index.ts`.
   Same philosophy as the backend's package-private modules + facades.
 - Barrels are the feature's public API only; inside a feature import files
@@ -134,6 +138,14 @@ Known traps (do not do):
 ## Test style
 
 - Vitest + React Testing Library + MSW.
+- Tests are colocated with the code they cover, in a `__tests__/` folder inside
+  that module's own directory (`app/theme/__tests__/palettes.test.ts`) — the
+  React and Vue layout. No mirrored tree: unlike Gradle nothing in the
+  toolchain forces a split, and a test that lives beside its module moves and
+  dies with it. The folder keeps source listings readable as a module grows.
+- `src/test/` holds no tests — only the harness: Vitest setup and the MSW
+  server and handlers. Playwright e2e gets a top-level `e2e/` when it lands,
+  since those tests belong to no single module.
 - MSW intercepts at the network level (axios rides XHR in jsdom), so tests
   exercise the real request path and survive internal refactors.
 - `onUnhandledRequest: 'error'` — unmocked calls fail loudly.

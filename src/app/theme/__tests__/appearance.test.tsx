@@ -5,7 +5,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { beforeEach, describe, expect, it } from 'vitest'
-import App from './App'
+import App from '../../App'
 
 // The palette and the theme are not independent: soloCookingSystem has no light
 // mode, so entering it forces dark and going light drops it. These are the

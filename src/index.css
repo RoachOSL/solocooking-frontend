@@ -7,7 +7,7 @@
    Each palette/mode pair is a complete, standalone set of tokens — no block
    inherits from or overrides another. That costs repetition and buys the
    guarantee that a token can never leak across a palette or a mode: whichever
-   block matches is the only one that applies. src/app/palettes.test.ts fails
+   block matches is the only one that applies. src/app/theme/__tests__/palettes.test.ts fails
    the build if the blocks ever stop declaring the same token names, or if one
    appears for a mode PALETTE_MODES does not list.
 
@@ -97,7 +97,7 @@
 }
 
 /* SoloCooking System: deep navy, neon blue, violet accent. Unlocked by the pot
-   easter egg, and dark only — see PALETTE_MODES in src/app/palettes.ts. There
+   easter egg, and dark only — see PALETTE_MODES in src/app/theme/palettes.ts. There
    is deliberately no light block: the neon reads as ordinary blue on white. */
 [data-palette='soloCookingSystem'].dark {
   color-scheme: dark;
