@@ -3,20 +3,187 @@
  */
 
 import { Link } from 'react-router'
+import { BookOpen, Carrot, CookingPot, ScrollText, Search } from 'lucide-react'
 import { Button } from '@/shared/components/ui/button'
+import { Input } from '@/shared/components/ui/input'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/ui/card'
+
+// Everything below the hero is a mocked placeholder: search, daily quest,
+// counters and recent recipes render static data until the backend grows the
+// matching endpoints (or the sections get cut).
+
+const mockRecentRecipes = [
+  {
+    id: '1',
+    name: 'Pancakes',
+    description: 'Fluffy breakfast pancakes',
+    rank: 'B',
+  },
+  {
+    id: '2',
+    name: 'Tomato Soup',
+    description: 'Simple and warming',
+    rank: 'A',
+  },
+  {
+    id: '3',
+    name: 'Garlic Naan',
+    description: 'Soft flatbread from the pan',
+    rank: 'S',
+  },
+]
+
+// Difficulty rank badge; S rank gets the violet accent.
+function RankBadge({ rank }: { rank: string }) {
+  return (
+    <span
+      title="Difficulty rank"
+      className={
+        rank === 'S'
+          ? 'inline-flex size-8 items-center justify-center rounded-md border-2 border-accent-foreground/50 text-lg font-black text-accent-foreground'
+          : 'inline-flex size-8 items-center justify-center rounded-md border-2 border-primary/50 text-lg font-black text-primary'
+      }
+    >
+      {rank}
+    </span>
+  )
+}
+
+function SearchPlaceholder() {
+  return (
+    <div className="relative mx-auto max-w-lg">
+      <Search
+        aria-hidden
+        className="absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-muted-foreground"
+      />
+      <Input
+        type="search"
+        disabled
+        placeholder="Search recipes…"
+        className="h-12 rounded-lg bg-card pl-11 text-base shadow-sm disabled:opacity-80"
+      />
+      <span className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full border border-primary/40 px-2 py-0.5 text-xs font-medium text-primary">
+        Soon
+      </span>
+    </div>
+  )
+}
+
+function DailyQuestCard() {
+  return (
+    <Card className="relative mx-auto max-w-md overflow-hidden border-primary/60 bg-gradient-to-b from-primary/15 to-card shadow-[0_0_32px_-12px_var(--color-primary),var(--card-shadow)]">
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent"
+      />
+      <CardContent className="flex flex-col items-center gap-3 text-center">
+        <p className="flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
+          <ScrollText aria-hidden className="size-4" />
+          Daily quest
+        </p>
+        <p className="text-2xl font-bold tracking-tight">Cook Tomato Soup</p>
+        <p className="text-sm text-muted-foreground">
+          Complete today&apos;s quest to keep your streak.
+        </p>
+        <div className="flex items-center gap-4 text-xs">
+          <span className="rounded-full border border-primary/40 px-2.5 py-0.5 font-semibold text-primary">
+            Reward: +50 XP
+          </span>
+          <span className="text-muted-foreground">Progress 0/1</span>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function StatsRow() {
+  return (
+    <div className="flex justify-center gap-8 text-sm text-muted-foreground">
+      <span className="flex items-center gap-2">
+        <BookOpen aria-hidden className="size-4 text-primary" />
+        12 recipes
+      </span>
+      <span className="flex items-center gap-2">
+        <Carrot aria-hidden className="size-4 text-primary" />
+        34 ingredients
+      </span>
+    </div>
+  )
+}
+
+function RecentRecipes() {
+  return (
+    <div className="text-left">
+      <h2 className="mb-4 text-center text-xl font-semibold tracking-tight">
+        Recent recipes
+      </h2>
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {mockRecentRecipes.map((recipe) => (
+          <li key={recipe.id}>
+            <Link to="/recipes" className="block h-full">
+              <Card className="h-full transition-colors hover:border-ring">
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between gap-2">
+                    {recipe.name}
+                    <RankBadge rank={recipe.rank} />
+                  </CardTitle>
+                  <CardDescription>{recipe.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="text-xs text-muted-foreground">
+                  Updated recently
+                </CardContent>
+              </Card>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 export function HomePage() {
   return (
-    <section className="mx-auto max-w-5xl p-6">
-      <h1 className="mb-4 text-4xl font-semibold tracking-tight">
+    <section className="relative mx-auto max-w-5xl overflow-hidden px-6 py-16 text-center">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-[radial-gradient(ellipse_at_bottom,color-mix(in_oklab,var(--color-primary)_16%,transparent),transparent_72%)]"
+      />
+      <CookingPot
+        aria-hidden
+        className="mx-auto mb-6 size-14 text-brand"
+        strokeWidth={1.5}
+      />
+      <h1 className="mb-4 text-5xl font-semibold tracking-tight sm:text-6xl">
         SoloCooking
       </h1>
-      <p className="mb-6 text-muted-foreground">
-        Recipes and ingredient catalog.
+      <p className="mx-auto mb-10 max-w-xl text-xl text-muted-foreground">
+        Your personal recipe collection and ingredient catalog.
       </p>
-      <Button asChild>
-        <Link to="/recipes">Browse recipes</Link>
-      </Button>
+      <div className="mb-12 flex flex-wrap justify-center gap-4">
+        <Button asChild size="lg" className="h-12 px-8 text-base">
+          <Link to="/recipes">Browse recipes</Link>
+        </Button>
+        <Button
+          asChild
+          variant="outline"
+          size="lg"
+          className="h-12 px-8 text-base"
+        >
+          <Link to="/ingredients">Browse ingredients</Link>
+        </Button>
+      </div>
+      <div className="flex flex-col gap-10">
+        <SearchPlaceholder />
+        <DailyQuestCard />
+        <StatsRow />
+        <RecentRecipes />
+      </div>
     </section>
   )
 }

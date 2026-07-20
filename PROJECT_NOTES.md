@@ -47,6 +47,47 @@ repository here.
   junit output is jest-compatible). Third-party actions are pinned to a full
   commit SHA with a version comment, never a mutable tag.
 
+## Theming
+
+- Two palettes ship long-term: `ember` (cast iron, flame orange) and
+  `soloCookingSystem` (navy, neon blue). `ember` has light and dark;
+  `soloCookingSystem` is dark only — its neon reads as ordinary blue on white.
+  Three looks to keep, not four.
+- Palette and theme are therefore paired, not independent: the pot forces dark
+  on the way in, and switching to light drops back to `ember`. `PALETTE_MODES`
+  in `src/app/palettes.ts` is the single source of that rule — the inline
+  script, `App`, and both test files read it rather than restating it.
+  Coordination lives in `App`; components stay dumb and never branch on the
+  palette.
+- `ember` is the product identity; `soloCookingSystem` is a skin. Anything that cannot be
+  expressed as a token — illustrations, logo, screenshots, marketing — targets
+  `ember` only, so the second palette costs minutes rather than days.
+  Red line: the first time a component needs `if (palette === ...)` or a
+  per-palette asset, the skin has stopped being free and one palette is cut.
+- There is no palette picker. `soloCookingSystem` is reached only by clicking the pot in
+  the header, which flashes COOK! across the screen; clicking it again returns
+  to `ember`. Theming is not a setting users are asked to manage — the choice
+  on offer is light/dark, and that is all.
+- Naming stays generic on purpose. The game-inspired vocabulary that seeded
+  these ideas is deliberately kept out of the code, copy and docs; the palette
+  is "System", the easter egg is "COOK!", ranks are difficulty ranks. Keep new
+  names in the app's own cooking vocabulary.
+- The palette lives in `data-palette` on `<html>`, the mode in the `.dark`
+  class. All four blocks in `src/index.css` are standalone and declare the full
+  token set — none inherits from or overrides another. The earlier layered
+  setup (default palette in `:root`/`.dark`, the other in classes on top) let a
+  light-mode block outrank a dark-mode one on equal specificity and silently
+  shipped a light card shadow in dark mode.
+- `src/app/palettes.test.ts` compares the token names across the four blocks
+  and fails when they diverge. Adding a token means adding it four times; the
+  test is what makes that safe instead of a matter of memory.
+- `index.html` applies the stored theme and palette in an inline script before
+  first paint. Its storage keys and values must stay in sync with
+  `src/app/useTheme.ts` and `src/app/palettes.ts`.
+- Background embers are part of the palette (`EMBER_PRESETS`), not a user
+  setting: fire over cast iron, mana over navy. Users only get an on/off
+  toggle; `prefers-reduced-motion` disables them regardless.
+
 ## Decisions queued for later (with leaning)
 
 | When               | Decision      | Leaning                                                                             |

@@ -1,10 +1,29 @@
 <!doctype html>
-<html lang="en">
+<!-- data-palette carries the default palette so the page is never unstyled,
+     even before the script below runs or with JavaScript disabled. -->
+<html lang="en" data-palette="ember">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SoloCooking</title>
+    <!-- Applies the stored theme and palette before first paint, so neither
+         flashes the wrong colors on load. Keys and values must match
+         src/app/useTheme.ts and src/app/palettes.ts.
+         Dark is the default rather than prefers-color-scheme: the palettes are
+         designed dark-first and the header toggle overrides it in one click. -->
+    <script>
+      const storedPalette = localStorage.getItem('palette')
+      // soloCookingSystem has no light mode, so it forces dark on regardless of
+      // the stored theme. Keep in sync with PALETTE_MODES in palettes.ts.
+      const darkOnly = storedPalette === 'soloCookingSystem'
+      if (darkOnly) {
+        document.documentElement.dataset.palette = storedPalette
+      }
+      if (darkOnly || localStorage.getItem('theme') !== 'light') {
+        document.documentElement.classList.add('dark')
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -3,47 +3,141 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ── Palettes ─────────────────────────────────────────────────────────────
+   Each palette/mode pair is a complete, standalone set of tokens — no block
+   inherits from or overrides another. That costs repetition and buys the
+   guarantee that a token can never leak across a palette or a mode: whichever
+   block matches is the only one that applies. src/app/palettes.test.ts fails
+   the build if the blocks ever stop declaring the same token names, or if one
+   appears for a mode PALETTE_MODES does not list.
+
+   The palette lives in the data-palette attribute on <html> (set in
+   index.html before first paint), the mode in the .dark class. */
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+/* Ember: cast-iron warm graphite, hot flame orange, herb-green accent. Dark is
+   the face; light is tuned to keep the same energy — deep secondary text, firm
+   borders, a card that separates from the page instead of melting into it. */
+[data-palette='ember'] {
+  /* Tells the browser how to paint what CSS cannot reach: scrollbars, the
+     native <select> dropdown, form control internals. */
+  color-scheme: light;
+  --background: oklch(0.955 0.009 80);
+  --foreground: oklch(0.24 0.014 60);
+  --card: oklch(0.995 0.004 85);
+  --card-foreground: oklch(0.24 0.014 60);
+  --popover: oklch(0.995 0.004 85);
+  --popover-foreground: oklch(0.24 0.014 60);
+  --primary: oklch(0.57 0.18 40);
+  --primary-foreground: oklch(0.98 0.008 80);
+  --secondary: oklch(0.925 0.02 75);
+  --secondary-foreground: oklch(0.3 0.022 60);
+  --muted: oklch(0.935 0.013 80);
+  --muted-foreground: oklch(0.44 0.028 60);
+  --accent: oklch(0.9 0.08 145);
+  --accent-foreground: oklch(0.32 0.09 145);
+  --destructive: oklch(0.52 0.21 15);
+  --border: oklch(0.85 0.016 75);
+  --input: oklch(0.85 0.016 75);
+  --ring: oklch(0.62 0.16 42);
+  /* Brand drives the pot logo and the COOK easter egg: ember red on every
+     palette, lightened for dark backgrounds. */
+  --brand: #d8402f;
+  /* The COOK! flash: a gradient fill clipped to the letters, a hard offset
+     shadow with no blur, and a wide halo outside both so the letterforms stay
+     sharp. Each palette casts it in its own colors — the pot that triggers it
+     stays --brand. */
+  --flash-gradient: linear-gradient(
+    120deg,
+    #f08a2c 0%,
+    #e8452f 55%,
+    #b8241a 100%
+  );
+  --flash-shadow: #7a2a12;
+  --flash-glow: oklch(0.65 0.2 35 / 30%);
+  /* Card elevation. Light mode carries a real drop shadow tinted with the
+     palette; dark mode leans on the border, where a shadow would be invisible. */
+  --card-shadow:
+    0 1px 2px oklch(0.24 0.014 60 / 8%),
+    0 6px 18px -10px oklch(0.24 0.014 60 / 18%);
+}
+
+[data-palette='ember'].dark {
+  color-scheme: dark;
+  --background: oklch(0.23 0.012 60);
+  --foreground: oklch(0.96 0.01 80);
+  --card: oklch(0.275 0.014 60);
+  --card-foreground: oklch(0.96 0.01 80);
+  --popover: oklch(0.275 0.014 60);
+  --popover-foreground: oklch(0.96 0.01 80);
+  --primary: oklch(0.71 0.19 45);
+  --primary-foreground: oklch(0.17 0.02 45);
+  --secondary: oklch(0.32 0.018 60);
+  --secondary-foreground: oklch(0.96 0.01 80);
+  --muted: oklch(0.31 0.016 60);
+  --muted-foreground: oklch(0.73 0.02 70);
+  --accent: oklch(0.36 0.08 145);
+  --accent-foreground: oklch(0.87 0.11 145);
+  --destructive: oklch(0.65 0.2 18);
+  --border: oklch(1 0.01 80 / 15%);
+  --input: oklch(1 0.01 80 / 19%);
+  --ring: oklch(0.71 0.16 45);
+  --brand: #ff5a45;
+  --flash-gradient: linear-gradient(
+    120deg,
+    #ffc247 0%,
+    #ff7a52 55%,
+    #e8452f 100%
+  );
+  --flash-shadow: #5e1c0a;
+  --flash-glow: oklch(0.7 0.2 40 / 50%);
+  --card-shadow: 0 1px 2px oklch(0 0 0 / 40%);
+}
+
+/* SoloCooking System: deep navy, neon blue, violet accent. Unlocked by the pot
+   easter egg, and dark only — see PALETTE_MODES in src/app/palettes.ts. There
+   is deliberately no light block: the neon reads as ordinary blue on white. */
+[data-palette='soloCookingSystem'].dark {
+  color-scheme: dark;
+  --background: #080b1c;
+  --foreground: #e4eeff;
+  --card: #121732;
+  --card-foreground: #e4eeff;
+  --popover: #121732;
+  --popover-foreground: #e4eeff;
+  --primary: #4cc0ff;
+  --primary-foreground: #04101f;
+  --secondary: #231d47;
+  --secondary-foreground: #e4eeff;
+  --muted: #161436;
+  --muted-foreground: #9ba1d6;
+  --accent: #3a2470;
+  --accent-foreground: #cfb2ff;
+  --destructive: #ff4f6b;
+  --border: oklch(0.72 0.14 292 / 28%);
+  --input: oklch(0.72 0.14 292 / 32%);
+  --ring: #4cc0ff;
+  --brand: #ff5a45;
+  /* Blue carries the flash: bright at the edges, deep in the middle of the
+     stroke, with violet only as a tail on the last stop. The shadow is deep
+     blue rather than violet so the whole thing stays cold and dark. */
+  --flash-gradient: linear-gradient(
+    120deg,
+    #7fd6ff 0%,
+    #1a6fd4 42%,
+    #3fb0f5 78%,
+    #8f6ee8 100%
+  );
+  --flash-shadow: #0a2a6b;
+  --flash-glow: oklch(0.68 0.17 250 / 60%);
+  /* Cards read as lit panels rather than raised paper: a hard contact shadow,
+     a tight blue core and a wide violet halo. The signature of this palette,
+     and the main place its violet is actually visible. */
+  --card-shadow:
+    0 1px 2px oklch(0 0 0 / 55%), 0 0 16px -8px oklch(0.72 0.16 250 / 40%),
+    0 0 36px -12px oklch(0.62 0.23 300 / 60%);
 }
 
 @theme inline {
@@ -69,6 +163,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --shadow-card: var(--card-shadow);
 }
 
 @layer base {
@@ -77,5 +173,46 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* The COOK! flash is extruded, not duplicated: one shadow per pixel of depth
+     fills the whole side wall. A single offset copy only reads as 3D on round
+     letters, where the offset shape still touches the original — on straight
+     stems it separates into two flat letters.
+
+     The first two layers are darkened into a keyline. Without it the gradient
+     face touches the side wall directly and loses the contrast it used to get
+     from the page behind it. The halo is doubled so it still reaches past the
+     solid mass the extrusion now casts. */
+  .flash-extrude {
+    --flash-edge: color-mix(in oklab, var(--flash-shadow) 55%, #000);
+    text-shadow:
+      1px 1px 0 var(--flash-edge),
+      2px 2px 0 var(--flash-edge),
+      3px 3px 0 var(--flash-shadow),
+      4px 4px 0 var(--flash-shadow),
+      5px 5px 0 var(--flash-shadow),
+      6px 6px 0 var(--flash-shadow),
+      0 0 20px var(--flash-glow),
+      0 0 44px var(--flash-glow);
+  }
+
+  @media (width >= 40rem) {
+    .flash-extrude {
+      text-shadow:
+        1px 1px 0 var(--flash-edge),
+        2px 2px 0 var(--flash-edge),
+        3px 3px 0 var(--flash-shadow),
+        4px 4px 0 var(--flash-shadow),
+        5px 5px 0 var(--flash-shadow),
+        6px 6px 0 var(--flash-shadow),
+        7px 7px 0 var(--flash-shadow),
+        8px 8px 0 var(--flash-shadow),
+        9px 9px 0 var(--flash-shadow),
+        0 0 28px var(--flash-glow),
+        0 0 64px var(--flash-glow);
+    }
   }
 }
