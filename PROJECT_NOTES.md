@@ -55,7 +55,7 @@ repository here.
   Three looks to keep, not four.
 - Palette and theme are therefore paired, not independent: the pot forces dark
   on the way in, and switching to light drops back to `ember`. `PALETTE_MODES`
-  in `src/app/palettes.ts` is the single source of that rule — the inline
+  in `src/app/theme/palettes.ts` is the single source of that rule — the inline
   script, `App`, and both test files read it rather than restating it.
   Coordination lives in `App`; components stay dumb and never branch on the
   palette.
@@ -84,12 +84,12 @@ repository here.
   setup (default palette in `:root`/`.dark`, the other in classes on top) let a
   light-mode block outrank a dark-mode one on equal specificity and silently
   shipped a light card shadow in dark mode.
-- `src/app/palettes.test.ts` compares the token names across the four blocks
+- `src/app/theme/__tests__/palettes.test.ts` compares the token names across the four blocks
   and fails when they diverge. Adding a token means adding it four times; the
   test is what makes that safe instead of a matter of memory.
 - `index.html` applies the stored theme and palette in an inline script before
   first paint. Its storage keys and values must stay in sync with
-  `src/app/useTheme.ts` and `src/app/palettes.ts`.
+  `src/app/theme/useTheme.ts` and `src/app/theme/palettes.ts`.
 - Background embers are part of the palette (`EMBER_PRESETS`), not a user
   setting: fire over cast iron, mana over navy. Users only get an on/off
   toggle; `prefers-reduced-motion` disables them regardless.

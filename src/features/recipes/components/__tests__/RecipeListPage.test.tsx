@@ -8,7 +8,7 @@ import { MemoryRouter } from 'react-router'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 import { server } from '@/test/msw/server'
-import { RecipeListPage } from './RecipeListPage'
+import { RecipeListPage } from '../RecipeListPage'
 
 function renderPage() {
   const queryClient = new QueryClient({

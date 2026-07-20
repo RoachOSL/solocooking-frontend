@@ -3,8 +3,8 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import css from '../index.css?raw'
-import { PALETTE_MODES, PALETTE_VALUES } from './palettes'
+import css from '../../../index.css?raw'
+import { PALETTE_MODES, PALETTE_VALUES } from '../palettes'
 
 // Every palette/mode block in src/index.css is standalone: nothing falls back
 // to another block, so a token missing from one of them renders as an unset

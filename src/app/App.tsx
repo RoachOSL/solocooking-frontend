@@ -5,9 +5,9 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
 import { cn } from '@/shared/lib/utils'
-import { CookEasterEgg } from './CookEasterEgg'
-import { Embers } from './Embers'
-import { EmbersToggle } from './EmbersToggle'
+import { CookEasterEgg } from './theme/CookEasterEgg'
+import { Embers } from './theme/Embers'
+import { EmbersToggle } from './theme/EmbersToggle'
 import {
   applyPalette,
   DEFAULT_PALETTE,
@@ -15,9 +15,9 @@ import {
   readPalette,
   supportsLight,
   type PaletteValue,
-} from './palettes'
-import { ThemeToggle } from './ThemeToggle'
-import { useTheme } from './useTheme'
+} from './theme/palettes'
+import { ThemeToggle } from './theme/ThemeToggle'
+import { useTheme } from './theme/useTheme'
 
 function navLinkClass({ isActive }: { isActive: boolean }) {
   return cn(
