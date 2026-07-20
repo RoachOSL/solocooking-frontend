@@ -68,10 +68,16 @@ repository here.
   the header, which flashes COOK! across the screen; clicking it again returns
   to `ember`. Theming is not a setting users are asked to manage — the choice
   on offer is light/dark, and that is all.
-- Naming stays generic on purpose. The game-inspired vocabulary that seeded
-  these ideas is deliberately kept out of the code, copy and docs; the palette
-  is "System", the easter egg is "COOK!", ranks are difficulty ranks. Keep new
-  names in the app's own cooking vocabulary.
+- Identifiers stay generic on purpose: palette values, token names, component
+  and file names carry no game vocabulary, and never name the franchise that
+  seeded the idea. The palette is "System", the easter egg is "COOK!", ranks
+  are difficulty ranks. Renaming a palette value means touching CSS, the inline
+  script and both test files, so the cost of a themed identifier is real.
+- User-facing copy is the exception: light RPG flavour is wanted there, and
+  "Daily quest", "+50 XP" and "Chef Lv. 3" on the home page are deliberate
+  seasoning, not leftovers. Keep it to generic progression vocabulary — level,
+  quest, XP, rank, streak — never a name or phrase lifted from a specific
+  work.
 - The palette lives in `data-palette` on `<html>`, the mode in the `.dark`
   class. All four blocks in `src/index.css` are standalone and declare the full
   token set — none inherits from or overrides another. The earlier layered

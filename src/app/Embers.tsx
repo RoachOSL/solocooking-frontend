@@ -169,7 +169,10 @@ export function Embers({ density, colorMode }: EmbersProps) {
     }
   }, [density, colorMode])
 
-  if (density === 'off') {
+  if (
+    density === 'off' ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
     return null
   }
 

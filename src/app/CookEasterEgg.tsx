@@ -10,8 +10,8 @@ interface CookEasterEggProps {
   onCook: () => void
 }
 
-// Clicking the pot flashes COOK! across the screen and triggers whatever the
-// parent hangs on it — currently the palette swap, which the flash covers.
+// The flash doubles as cover for whatever the parent hangs on onCook, which is
+// currently a palette swap.
 export function CookEasterEgg({ onCook }: CookEasterEggProps) {
   const [flashing, setFlashing] = useState(false)
 

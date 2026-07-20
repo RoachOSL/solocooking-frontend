@@ -32,7 +32,14 @@ facts and decisions belong in `PROJECT_NOTES.md`.
 
 ## Code Review
 
-When the user asks for a code review, always run `/code-review ultra`.
+When the user asks for a code review, run `/code-review max` — the local
+review at the strongest reasoning effort. If that argument is rejected, fall
+back to plain `/code-review` and say so.
+
+Never launch `/code-review ultra` (alias `/ultrareview`). It runs a
+multi-agent review in the cloud, draws on a limited quota, and is
+user-triggered by design — only the user starts it, for a full branch before
+a merge to `main`.
 
 ## Communication
 

@@ -39,7 +39,6 @@ const mockRecentRecipes = [
   },
 ]
 
-// Difficulty rank badge; S rank gets the violet accent.
 function RankBadge({ rank }: { rank: string }) {
   return (
     <span

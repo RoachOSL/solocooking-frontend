@@ -43,8 +43,7 @@ export default function App() {
     setPalette(next)
   }
 
-  // The SoloCooking System palette has no control of its own: the pot easter
-  // egg is the only way in, and it only exists in the dark.
+  // There is no palette picker; the pot is the only way in and out.
   function togglePalette() {
     const next: PaletteValue =
       palette === 'ember' ? 'soloCookingSystem' : DEFAULT_PALETTE
