@@ -46,7 +46,7 @@ function colorsFor(mode: EmberColorMode): string[] {
     case 'brand':
       return [paletteToken('--brand')]
     case 'accent':
-      return [paletteToken('--accent-foreground')]
+      return [paletteToken('--highlight-foreground')]
     case 'ember':
       return ['#ff8a3c']
     case 'fire':

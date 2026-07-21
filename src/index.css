@@ -17,7 +17,12 @@
   --radius: 0.625rem;
 }
 
-/* Ember: cast-iron warm graphite, hot flame orange, herb-green accent. Dark is
+/* --accent is shadcn's neutral interaction surface — the hover behind outline
+   and ghost buttons — so it stays a quiet tint of the page. The palette's
+   decorative color lives in --highlight, which nothing hovers: herb green on
+   cast iron, violet on navy.
+
+   Ember: cast-iron warm graphite, hot flame orange, herb-green highlight. Dark is
    the face; light is tuned to keep the same energy — deep secondary text, firm
    borders, a card that separates from the page instead of melting into it. */
 [data-palette='ember'] {
@@ -36,8 +41,10 @@
   --secondary-foreground: oklch(0.3 0.022 60);
   --muted: oklch(0.935 0.013 80);
   --muted-foreground: oklch(0.44 0.028 60);
-  --accent: oklch(0.9 0.08 145);
-  --accent-foreground: oklch(0.32 0.09 145);
+  --accent: oklch(0.915 0.018 78);
+  --accent-foreground: oklch(0.3 0.022 60);
+  --highlight: oklch(0.9 0.08 145);
+  --highlight-foreground: oklch(0.32 0.09 145);
   --destructive: oklch(0.52 0.21 15);
   --border: oklch(0.85 0.016 75);
   --input: oklch(0.85 0.016 75);
@@ -78,8 +85,10 @@
   --secondary-foreground: oklch(0.96 0.01 80);
   --muted: oklch(0.31 0.016 60);
   --muted-foreground: oklch(0.73 0.02 70);
-  --accent: oklch(0.36 0.08 145);
-  --accent-foreground: oklch(0.87 0.11 145);
+  --accent: oklch(0.32 0.018 60);
+  --accent-foreground: oklch(0.96 0.01 80);
+  --highlight: oklch(0.36 0.08 145);
+  --highlight-foreground: oklch(0.87 0.11 145);
   --destructive: oklch(0.65 0.2 18);
   --border: oklch(1 0.01 80 / 15%);
   --input: oklch(1 0.01 80 / 19%);
@@ -115,6 +124,8 @@
   --muted-foreground: #9ba1d6;
   --accent: #3a2470;
   --accent-foreground: #cfb2ff;
+  --highlight: #3a2470;
+  --highlight-foreground: #cfb2ff;
   --destructive: #ff4f6b;
   --border: oklch(0.72 0.14 292 / 28%);
   --input: oklch(0.72 0.14 292 / 32%);
@@ -159,6 +170,8 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-input: var(--input);
@@ -171,12 +184,46 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* Reserve the scrollbar gutter on every page, scrolling or not. Without it a
+     short route (the home page) has no scrollbar and a long one (the ingredient
+     catalog) does, so the viewport changes width between routes and everything
+     centered by mx-auto jumps sideways on navigation. */
+  html {
+    scrollbar-gutter: stable;
+  }
   body {
     @apply bg-background text-foreground;
   }
 }
 
+/* Starts fully off the left edge and leaves fully off the right, so the rail is
+   never half-lit at the turn. */
+@keyframes loading-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(400%);
+  }
+}
+
 @layer components {
+  /* Indeterminate on purpose — no request reports how far along it is, so a
+     filling bar would be inventing a number. ease-in-out carries the character:
+     heat travelling along a burner, not a block sliding on a rail. */
+  .loading-sweep {
+    animation: loading-sweep 1.15s ease-in-out infinite;
+  }
+
+  /* Reduced motion takes the travel, not the signal. */
+  @media (prefers-reduced-motion: reduce) {
+    .loading-sweep {
+      animation: none;
+      width: 100%;
+      transform: none;
+    }
+  }
+
   /* The COOK! flash is extruded, not duplicated: one shadow per pixel of depth
      fills the whole side wall. A single offset copy only reads as 3D on round
      letters, where the offset shape still touches the original — on straight

@@ -3,3 +3,8 @@
  */
 
 export { IngredientListPage } from './components/IngredientListPage'
+export {
+  useIngredients,
+  useIngredientSearch,
+  useCreateIngredient,
+} from './hooks/useIngredients'

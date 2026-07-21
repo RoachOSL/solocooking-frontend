@@ -12,6 +12,20 @@ section.
   Do not add AI co-author trailers, generation footers, or similar attribution
   to commits, pull requests, source files, or documentation.
 
+- Never commit secrets: API keys, tokens, passwords, connection strings,
+  private keys or any other credential. Not in source, not in config, not in
+  tests, not in fixtures, not in committed docs — and never as a value in
+  `.env` files that are tracked. Anything a build needs at runtime comes from
+  the environment (`import.meta.env` for Vite, repository secrets for GitHub
+  Actions), with only the variable **name** appearing in the repository.
+- Anything shipped to the browser is public. A Vite `VITE_*` variable is
+  inlined into the bundle at build time, so it may carry a public identifier
+  or a URL, never a secret. A value that must stay secret belongs behind the
+  backend, not in a frontend build.
+- A credential that lands in a commit is compromised even after the commit is
+  amended or the file deleted — Git history keeps it. Rotate it first, then
+  clean up.
+
 ## Architecture
 
 Repository structure — feature-based colocation:
@@ -95,6 +109,29 @@ UI and styling — Tailwind v4 + shadcn/ui:
 - Every page must be responsive (RWD): mobile-first layout with flex/grid and
   relative units, no fixed pixel widths for layout, wrapping instead of
   overflow (`flex-wrap`). Verify down to ~320 px viewport width.
+- Page width is decided once, in `shared/components/PageSection.tsx`, and every
+  page and the nav use it (`PageSection`, or `PAGE_CONTAINER` where the element
+  is not a `<section>`). A page that sets its own `max-w-*` drifts from the
+  header the day either side changes, and widening one screen silently makes
+  the rest look narrow. Horizontal padding scales with the viewport
+  (`px-4 sm:px-6`), never a single fixed value.
+- Page width and line length are different problems: the container stays wide
+  for grids, and prose caps itself on the element that holds it
+  (`max-w-xl` on a paragraph). Do not narrow the page to fix a paragraph.
+- Grids scale by breakpoint from one column up, so a card never relies on
+  desktop width to stay readable
+  (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`).
+- A recurring visual element is defined once in `shared/components/ui/` and
+  used from there — never assembled inline on a page and copied to the next
+  one. Four hand-written copies of the same pill badge had already drifted on
+  padding and weight before anyone noticed, and nothing could say which copy
+  was correct. Reach for the primitive first; write the element inline only
+  while it is genuinely single-use, and move it the moment a second page wants
+  it.
+- A control that must match an existing one references its styling rather than
+  restating it (`FIELD_SHELL` in `ui/input.tsx`, shared by the text input and
+  a native `<select>`). Two class lists that merely happen to agree today are
+  not a relationship the next edit will respect.
 - Theme colors live exclusively in the design tokens in `src/index.css`
   (`:root` + `.dark`); components reference tokens (`bg-primary`,
   `text-muted-foreground`), never raw color values.
@@ -108,6 +145,50 @@ Routing — React Router v7, library mode:
 - No SSR/Next.js: app sits behind a login eventually, no SEO need. Vite SPA
   is the right weight.
 
+Explicit boundaries — no behaviour arrives by inheritance or default:
+
+- **One name, one meaning.** A token, prop, CSS class or type means the same
+  thing everywhere it appears. When something needs a second meaning, it gets
+  a second name. Overloading an existing name is how a change in one place
+  surfaces somewhere nobody was looking.
+- **Never repurpose a library's semantic slot.** shadcn's `--accent` is the
+  neutral surface behind `outline` and `ghost` hovers, not a brand accent
+  color. Painting it with the palette's decorative color turned every hover in
+  the app green; the fix was a separate `--highlight` token that nothing
+  hovers. The same applies to any borrowed vocabulary — adopt the library's
+  meaning or pick your own name, never both.
+- **Standalone over layered.** Where variants of a thing exist (palette/mode
+  blocks, config profiles, environment overrides), each declares its full set
+  rather than inheriting and patching another. Repetition is the price;
+  the guarantee that no variant can leak into another is what it buys.
+- **A shared default must fit every caller, or it is not shared.** A status
+  code, error message or fallback that reads correctly at one call site and
+  lies at another belongs at the call sites. Generic 409 copy fits "name
+  taken" and misdescribes "still referenced".
+- **Make divergence fail loudly.** When a rule spans several files, add the
+  check that breaks the build when they drift (`palettes.test.ts` compares
+  token names across every palette block). A convention nothing enforces is a
+  convention that decays.
+- Prefer explicit over implicit generally: pass the value rather than relying
+  on a default, name the case rather than falling through to `else`.
+
+Loading feedback — three jobs, three answers:
+
+- **"Is anything happening?"** is one global answer, derived from the query
+  layer (`useIsFetching` + `useIsMutating`), never wired per page. A new
+  feature is covered the day it makes its first request.
+- **"What is loading?"** is answered in place, by placeholders shaped like the
+  content that is coming. Never more placeholders than the request can return.
+- **"Are these results current?"** is answered by keeping the previous ones on
+  screen and marking them stale, not by clearing the screen. Paginated and
+  searched lists use `placeholderData: keepPreviousData`; a list that empties
+  on every keystroke loses what the reader was reading.
+- A loading state that can appear and vanish within a few frames must not
+  appear at all: delay showing it, and once shown, hold it long enough to read.
+- Placeholder counts are a layout question, so CSS answers them — render the
+  full set and hide what does not fit each breakpoint. One fixed number cannot
+  serve a phone and a desktop.
+
 Known traps (do not do):
 
 1. `useEffect` for data fetching — old-tutorial pattern, Query replaces it.
@@ -115,6 +196,7 @@ Known traps (do not do):
 3. Premature abstraction — extract to `shared/` at the second use.
 4. Deep imports across features / barrels inside a feature.
 5. Adding a component mega-library alongside shadcn.
+6. Giving an existing name a second meaning instead of introducing a new one.
 
 ## Code style
 

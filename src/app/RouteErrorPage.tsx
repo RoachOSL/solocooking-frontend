@@ -3,6 +3,8 @@
  */
 
 import { Link, isRouteErrorResponse, useRouteError } from 'react-router'
+import { PAGE_CONTAINER } from '@/shared/components/PageSection'
+import { cn } from '@/shared/lib/utils'
 
 export function RouteErrorPage() {
   const error = useRouteError()
@@ -11,7 +13,7 @@ export function RouteErrorPage() {
     error === undefined || (isRouteErrorResponse(error) && error.status === 404)
 
   return (
-    <main role="alert" className="mx-auto max-w-5xl p-6">
+    <main role="alert" className={cn(PAGE_CONTAINER, 'py-6')}>
       <h1 className="mb-2 text-3xl font-semibold tracking-tight">
         {notFound ? 'Page not found' : 'Something went wrong'}
       </h1>

@@ -16,8 +16,13 @@ repository here.
 ## OpenAPI codegen flow
 
 - Spec snapshot committed as `openapi.json` in this repo:
-  - `npm run spec:update` — pulls `http://localhost:8080/api/v3/api-docs`
-    (backend must be running; note the `/api` servlet path).
+  - `npm run spec:update` — pulls
+    `http://localhost:8080/api/v3/api-docs/soloprogramming` (backend must be
+    running; note the `/api` servlet path and the grouped-spec suffix — the
+    bare `/v3/api-docs` path serves a different document).
+  - Spring returns minified JSON, so run `npm run format` straight after:
+    the snapshot is committed Prettier-formatted, which is what keeps contract
+    diffs readable.
   - `npm run generate` — Hey API reads the local snapshot; works offline.
   - Snapshot + generated output are committed, so PR diffs show contract
     changes and CI never needs a running Spring app.
@@ -93,6 +98,55 @@ repository here.
 - Background embers are part of the palette (`EMBER_PRESETS`), not a user
   setting: fire over cast iron, mana over navy. Users only get an on/off
   toggle; `prefers-reduced-motion` disables them regardless.
+
+## UI work
+
+- New UI or a visual reshape of existing UI starts with the
+  `frontend-design` skill, before writing markup. It covers aesthetic
+  direction, typography and spacing choices, and keeps output from settling
+  into templated defaults — which matters here because the look is the
+  product identity, not a wrapper around the API.
+- Applies to visual work only. Plumbing changes — codegen refresh, query
+  wiring, routing, tests — skip it.
+- Skill guidance never outranks this file: the palette rules under _Theming_
+  win when the two disagree.
+
+## Palette changes need approval
+
+- Nobody edits a palette value without the owner agreeing to it first. This
+  covers every color token in `src/index.css` — `--background`, `--card`,
+  `--muted`, `--border`, `--primary`, `--accent`, `--highlight`, the flash
+  gradient, the card shadow — in any palette or mode. The palette is the
+  product identity, not a variable to tune while fixing something else.
+- Design feedback about contrast or hierarchy is a reason to **propose** a
+  change, never to make one. Feedback like "too many similar browns" gets a
+  proposal, not a commit.
+- A proposal states, per token: current value, proposed value, what visibly
+  changes, and which screens it touches. Palette tokens are global — one value
+  moves every page at once, so "it looked better on this screen" is not a
+  justification on its own.
+- Layout, spacing, typography, and which token an element references are
+  ordinary work and need no approval. Changing what a token _is_ does.
+  Swapping `bg-muted` for `bg-card` on one element: fine. Changing what
+  `--muted` means: ask.
+
+## Loading feedback
+
+- `src/app/GlobalLoadingBar.tsx` sits on the header's bottom border and is the
+  app's only global "working" signal. It shows after 250 ms and stays at least
+  400 ms. Colour comes from `--primary`, so all three looks are covered with no
+  branching on the palette; the sweep is `.loading-sweep` in `src/index.css`.
+- `shared/components/ui/skeleton.tsx` is the placeholder primitive. The
+  ingredient catalog uses it via `CatalogSkeleton`, which shares `CARD_GRID`
+  with the real list and hides placeholders past each breakpoint's screenful
+  (6 / 8 / 12 / 24). `SKELETON_COUNT` is `PAGE_SIZE`, never a literal.
+- Ingredient list and search hold previous results (`KEEP_LIST_ON_SCREEN` in
+  `hooks/useIngredients.ts`) and dim to 60% while stale. The skeleton is then
+  reached only on a genuine first load. Covered by "keeps the previous results
+  on screen while the next search loads" — removing `keepPreviousData` has no
+  other visible symptom.
+- The home page shows no bar because it issues no requests: everything below
+  its hero is still mocked.
 
 ## Decisions queued for later (with leaning)
 

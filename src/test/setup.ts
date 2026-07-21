@@ -4,6 +4,7 @@
 
 import '@testing-library/jest-dom/vitest'
 import { afterAll, afterEach, beforeAll } from 'vitest'
+import { resetIngredients } from './msw/handlers'
 import { server } from './msw/server'
 
 // jsdom implements neither API. The suite answers "yes" to reduced motion, so
@@ -26,5 +27,8 @@ window.ResizeObserver = class {
 }
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
-afterEach(() => server.resetHandlers())
+afterEach(() => {
+  server.resetHandlers()
+  resetIngredients()
+})
 afterAll(() => server.close())

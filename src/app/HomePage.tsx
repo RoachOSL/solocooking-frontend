@@ -3,9 +3,8 @@
  */
 
 import { Link } from 'react-router'
-import { BookOpen, Carrot, CookingPot, ScrollText, Search } from 'lucide-react'
+import { BookOpen, Carrot, CookingPot, ScrollText } from 'lucide-react'
 import { Button } from '@/shared/components/ui/button'
-import { Input } from '@/shared/components/ui/input'
 import {
   Card,
   CardContent,
@@ -13,6 +12,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/components/ui/card'
+import { PageSection } from '@/shared/components/PageSection'
+import { SearchField } from '@/shared/components/SearchField'
+import { Badge } from '@/shared/components/ui/badge'
 
 // Everything below the hero is a mocked placeholder: search, daily quest,
 // counters and recent recipes render static data until the backend grows the
@@ -45,7 +47,7 @@ function RankBadge({ rank }: { rank: string }) {
       title="Difficulty rank"
       className={
         rank === 'S'
-          ? 'inline-flex size-8 items-center justify-center rounded-md border-2 border-accent-foreground/50 text-lg font-black text-accent-foreground'
+          ? 'inline-flex size-8 items-center justify-center rounded-md border-2 border-highlight-foreground/50 text-lg font-black text-highlight-foreground'
           : 'inline-flex size-8 items-center justify-center rounded-md border-2 border-primary/50 text-lg font-black text-primary'
       }
     >
@@ -56,21 +58,13 @@ function RankBadge({ rank }: { rank: string }) {
 
 function SearchPlaceholder() {
   return (
-    <div className="relative mx-auto max-w-lg">
-      <Search
-        aria-hidden
-        className="absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-muted-foreground"
-      />
-      <Input
-        type="search"
-        disabled
-        placeholder="Search recipes…"
-        className="h-12 rounded-lg bg-card pl-11 text-base shadow-sm disabled:opacity-80"
-      />
-      <span className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full border border-primary/40 px-2 py-0.5 text-xs font-medium text-primary">
-        Soon
-      </span>
-    </div>
+    <SearchField
+      disabled
+      placeholder="Search recipes…"
+      className="mx-auto max-w-lg"
+    >
+      <Badge className="absolute top-1/2 right-3 -translate-y-1/2">Soon</Badge>
+    </SearchField>
   )
 }
 
@@ -91,9 +85,7 @@ function DailyQuestCard() {
           Complete today&apos;s quest to keep your streak.
         </p>
         <div className="flex items-center gap-4 text-xs">
-          <span className="rounded-full border border-primary/40 px-2.5 py-0.5 font-semibold text-primary">
-            Reward: +50 XP
-          </span>
+          <Badge className="px-2.5 font-semibold">Reward: +50 XP</Badge>
           <span className="text-muted-foreground">Progress 0/1</span>
         </div>
       </CardContent>
@@ -148,11 +140,7 @@ function RecentRecipes() {
 
 export function HomePage() {
   return (
-    <section className="relative mx-auto max-w-5xl overflow-hidden px-6 py-16 text-center">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-[radial-gradient(ellipse_at_bottom,color-mix(in_oklab,var(--color-primary)_16%,transparent),transparent_72%)]"
-      />
+    <PageSection className="py-16 text-center">
       <CookingPot
         aria-hidden
         className="mx-auto mb-6 size-14 text-brand"
@@ -183,6 +171,6 @@ export function HomePage() {
         <StatsRow />
         <RecentRecipes />
       </div>
-    </section>
+    </PageSection>
   )
 }
