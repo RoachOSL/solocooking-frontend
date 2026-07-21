@@ -4,23 +4,57 @@ export type ClientOptions = {
     baseURL: `${string}://${string}/api` | (string & {});
 };
 
-export type CreateRecipeIngredientRequest = {
+export type ProblemDetail = {
+    type?: string;
+    title?: string;
+    status?: number;
+    detail?: string;
+    instance?: string;
+    properties?: {
+        [key: string]: {
+            [key: string]: unknown;
+        };
+    };
+};
+
+export type BadRequestProblemDetail = {
+    type?: string;
+    title?: string;
+    status?: number;
+    detail?: string;
+    instance?: string;
+    properties?: {
+        [key: string]: {
+            [key: string]: unknown;
+        };
+    };
+    /**
+     * Validation messages keyed by request field
+     */
+    errors?: {
+        [key: string]: string;
+    };
+};
+
+export type UpdateRecipeIngredientRequest = {
+    id?: string;
     ingredientId: string;
     amount: number;
     unit: string;
     note?: string;
 };
 
-export type CreateRecipeRequest = {
+export type UpdateRecipeRequest = {
     name: string;
     imageUrl: string;
     description: string;
-    sections: Array<CreateRecipeSectionRequest>;
+    sections: Array<UpdateRecipeSectionRequest>;
 };
 
-export type CreateRecipeSectionRequest = {
+export type UpdateRecipeSectionRequest = {
+    id?: string;
     name: string;
-    ingredients: Array<CreateRecipeIngredientRequest>;
+    ingredients: Array<UpdateRecipeIngredientRequest>;
 };
 
 export type RecipeDto = {
@@ -49,6 +83,25 @@ export type RecipeSectionDto = {
     ingredients: Array<RecipeIngredientDto>;
 };
 
+export type CreateRecipeIngredientRequest = {
+    ingredientId: string;
+    amount: number;
+    unit: string;
+    note?: string;
+};
+
+export type CreateRecipeRequest = {
+    name: string;
+    imageUrl: string;
+    description: string;
+    sections: Array<CreateRecipeSectionRequest>;
+};
+
+export type CreateRecipeSectionRequest = {
+    name: string;
+    ingredients: Array<CreateRecipeIngredientRequest>;
+};
+
 export type CreateIngredientRequest = {
     name: string;
 };
@@ -56,6 +109,10 @@ export type CreateIngredientRequest = {
 export type IngredientDto = {
     id: string;
     name: string;
+};
+
+export type UpdateIngredientRequest = {
+    name?: string | null;
 };
 
 export type PageMetadata = {
@@ -84,6 +141,82 @@ export type PageResponseIngredientDto = {
     page: PageMetadata;
 };
 
+export type DeleteRecipeData = {
+    body?: never;
+    path: {
+        recipeId: string;
+    };
+    query?: never;
+    url: '/recipes/{recipeId}';
+};
+
+export type DeleteRecipeResponses = {
+    /**
+     * Recipe deleted or already absent
+     */
+    204: void;
+};
+
+export type DeleteRecipeResponse = DeleteRecipeResponses[keyof DeleteRecipeResponses];
+
+export type GetRecipeData = {
+    body?: never;
+    path: {
+        recipeId: string;
+    };
+    query?: never;
+    url: '/recipes/{recipeId}';
+};
+
+export type GetRecipeErrors = {
+    /**
+     * Requested resource was not found
+     */
+    404: ProblemDetail;
+};
+
+export type GetRecipeError = GetRecipeErrors[keyof GetRecipeErrors];
+
+export type GetRecipeResponses = {
+    /**
+     * Recipe returned
+     */
+    200: RecipeDto;
+};
+
+export type GetRecipeResponse = GetRecipeResponses[keyof GetRecipeResponses];
+
+export type UpdateRecipeData = {
+    body: UpdateRecipeRequest;
+    path: {
+        recipeId: string;
+    };
+    query?: never;
+    url: '/recipes/{recipeId}';
+};
+
+export type UpdateRecipeErrors = {
+    /**
+     * Request validation failed
+     */
+    400: BadRequestProblemDetail;
+    /**
+     * Requested resource was not found
+     */
+    404: ProblemDetail;
+};
+
+export type UpdateRecipeError = UpdateRecipeErrors[keyof UpdateRecipeErrors];
+
+export type UpdateRecipeResponses = {
+    /**
+     * Recipe updated
+     */
+    200: RecipeDto;
+};
+
+export type UpdateRecipeResponse = UpdateRecipeResponses[keyof UpdateRecipeResponses];
+
 export type GetRecipesData = {
     body?: never;
     path?: never;
@@ -106,7 +239,7 @@ export type GetRecipesData = {
 
 export type GetRecipesResponses = {
     /**
-     * OK
+     * Recipes returned
      */
     200: PageResponseRecipeSummaryDto;
 };
@@ -120,9 +253,22 @@ export type CreateRecipeData = {
     url: '/recipes';
 };
 
+export type CreateRecipeErrors = {
+    /**
+     * Request validation failed
+     */
+    400: BadRequestProblemDetail;
+    /**
+     * Requested resource was not found
+     */
+    404: ProblemDetail;
+};
+
+export type CreateRecipeError = CreateRecipeErrors[keyof CreateRecipeErrors];
+
 export type CreateRecipeResponses = {
     /**
-     * Created
+     * Recipe created
      */
     201: RecipeDto;
 };
@@ -151,7 +297,7 @@ export type GetIngredientsData = {
 
 export type GetIngredientsResponses = {
     /**
-     * OK
+     * Ingredients returned
      */
     200: PageResponseIngredientDto;
 };
@@ -165,50 +311,54 @@ export type CreateIngredientData = {
     url: '/ingredients';
 };
 
+export type CreateIngredientErrors = {
+    /**
+     * Request validation failed
+     */
+    400: BadRequestProblemDetail;
+    /**
+     * Request conflicts with current resource state
+     */
+    409: ProblemDetail;
+};
+
+export type CreateIngredientError = CreateIngredientErrors[keyof CreateIngredientErrors];
+
 export type CreateIngredientResponses = {
     /**
-     * Created
+     * Ingredient created
      */
     201: IngredientDto;
 };
 
 export type CreateIngredientResponse = CreateIngredientResponses[keyof CreateIngredientResponses];
 
-export type DeleteRecipeData = {
+export type DeleteIngredientData = {
     body?: never;
     path: {
-        recipeId: string;
+        ingredientId: string;
     };
     query?: never;
-    url: '/recipes/{recipeId}';
+    url: '/ingredients/{ingredientId}';
 };
 
-export type DeleteRecipeResponses = {
+export type DeleteIngredientErrors = {
     /**
-     * No Content
+     * Request conflicts with current resource state
+     */
+    409: ProblemDetail;
+};
+
+export type DeleteIngredientError = DeleteIngredientErrors[keyof DeleteIngredientErrors];
+
+export type DeleteIngredientResponses = {
+    /**
+     * Ingredient deleted or already absent
      */
     204: void;
 };
 
-export type DeleteRecipeResponse = DeleteRecipeResponses[keyof DeleteRecipeResponses];
-
-export type GetRecipeData = {
-    body?: never;
-    path: {
-        recipeId: string;
-    };
-    query?: never;
-    url: '/recipes/{recipeId}';
-};
-
-export type GetRecipeResponses = {
-    /**
-     * OK
-     */
-    200: RecipeDto;
-};
-
-export type GetRecipeResponse = GetRecipeResponses[keyof GetRecipeResponses];
+export type DeleteIngredientResponse = DeleteIngredientResponses[keyof DeleteIngredientResponses];
 
 export type GetIngredientData = {
     body?: never;
@@ -219,11 +369,97 @@ export type GetIngredientData = {
     url: '/ingredients/{ingredientId}';
 };
 
+export type GetIngredientErrors = {
+    /**
+     * Requested resource was not found
+     */
+    404: ProblemDetail;
+};
+
+export type GetIngredientError = GetIngredientErrors[keyof GetIngredientErrors];
+
 export type GetIngredientResponses = {
     /**
-     * OK
+     * Ingredient returned
      */
     200: IngredientDto;
 };
 
 export type GetIngredientResponse = GetIngredientResponses[keyof GetIngredientResponses];
+
+export type UpdateIngredientData = {
+    body: UpdateIngredientRequest;
+    path: {
+        ingredientId: string;
+    };
+    query?: never;
+    url: '/ingredients/{ingredientId}';
+};
+
+export type UpdateIngredientErrors = {
+    /**
+     * Request validation failed
+     */
+    400: BadRequestProblemDetail;
+    /**
+     * Requested resource was not found
+     */
+    404: ProblemDetail;
+    /**
+     * Request conflicts with current resource state
+     */
+    409: ProblemDetail;
+};
+
+export type UpdateIngredientError = UpdateIngredientErrors[keyof UpdateIngredientErrors];
+
+export type UpdateIngredientResponses = {
+    /**
+     * Ingredient updated
+     */
+    200: IngredientDto;
+};
+
+export type UpdateIngredientResponse = UpdateIngredientResponses[keyof UpdateIngredientResponses];
+
+export type SearchIngredientsData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Case-insensitive name fragment
+         */
+        name: string;
+        /**
+         * Zero-based page index (0..N)
+         */
+        page?: number;
+        /**
+         * The size of the page to be returned
+         */
+        size?: number;
+        /**
+         * Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         */
+        sort?: Array<string>;
+    };
+    url: '/ingredients/search';
+};
+
+export type SearchIngredientsErrors = {
+    /**
+     * Request validation failed
+     */
+    400: BadRequestProblemDetail;
+};
+
+export type SearchIngredientsError = SearchIngredientsErrors[keyof SearchIngredientsErrors];
+
+export type SearchIngredientsResponses = {
+    /**
+     * Matching ingredients returned
+     */
+    200: PageResponseIngredientDto;
+};
+
+export type SearchIngredientsResponse = SearchIngredientsResponses[keyof SearchIngredientsResponses];

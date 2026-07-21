@@ -3,14 +3,14 @@
  */
 
 import { fireEvent, render, screen } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { beforeEach, describe, expect, it } from 'vitest'
 import App from '../../App'
 
-// The palette and the theme are not independent: soloCookingSystem has no light
-// mode, so entering it forces dark and going light drops it. These are the
-// tests for that pairing — without them the app can reach a state whose tokens
-// do not exist in src/index.css.
+// Palette and theme are paired: soloCookingSystem has no light mode, so
+// entering it forces dark and going light drops it. Break the pairing and the
+// app reaches a state whose tokens do not exist in src/index.css.
 
 function renderApp() {
   const router = createMemoryRouter(
@@ -23,7 +23,11 @@ function renderApp() {
     ],
     { initialEntries: ['/'] },
   )
-  render(<RouterProvider router={router} />)
+  render(
+    <QueryClientProvider client={new QueryClient()}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>,
+  )
 }
 
 function setAppearance(palette: string, theme: 'light' | 'dark') {

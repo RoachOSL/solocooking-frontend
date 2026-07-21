@@ -15,6 +15,83 @@
     }
   ],
   "paths": {
+    "/recipes/{recipeId}": {
+      "get": {
+        "tags": ["recipe-controller"],
+        "summary": "Get recipe by id",
+        "description": "Returns a recipe for given id",
+        "operationId": "getRecipe",
+        "parameters": [
+          {
+            "name": "recipeId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recipe returned",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RecipeDTO" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["recipe-controller"],
+        "summary": "Updates entire recipe",
+        "operationId": "updateRecipe",
+        "parameters": [
+          {
+            "name": "recipeId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateRecipeRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Recipe updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RecipeDTO" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["recipe-controller"],
+        "summary": "Delete recipe by id",
+        "description": "Deletes the recipe when it exists. Repeated requests return no content.",
+        "operationId": "deleteRecipe",
+        "parameters": [
+          {
+            "name": "recipeId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Recipe deleted or already absent" }
+        }
+      }
+    },
     "/recipes": {
       "get": {
         "tags": ["recipe-controller"],
@@ -46,7 +123,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Recipes returned",
             "content": {
               "application/json": {
                 "schema": {
@@ -71,13 +148,15 @@
         },
         "responses": {
           "201": {
-            "description": "Created",
+            "description": "Recipe created",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/RecipeDTO" }
               }
             }
-          }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     },
@@ -111,7 +190,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ingredients returned",
             "content": {
               "application/json": {
                 "schema": {
@@ -138,55 +217,16 @@
         },
         "responses": {
           "201": {
-            "description": "Created",
+            "description": "Ingredient created",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/IngredientDTO" }
               }
             }
-          }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "409": { "$ref": "#/components/responses/Conflict" }
         }
-      }
-    },
-    "/recipes/{recipeId}": {
-      "get": {
-        "tags": ["recipe-controller"],
-        "summary": "Get recipe by id",
-        "description": "Returns a recipe for given id",
-        "operationId": "getRecipe",
-        "parameters": [
-          {
-            "name": "recipeId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string", "format": "uuid" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/RecipeDTO" }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["recipe-controller"],
-        "summary": "Delete recipe by id",
-        "description": "Deletes the recipe when it exists. Repeated requests return no content.",
-        "operationId": "deleteRecipe",
-        "parameters": [
-          {
-            "name": "recipeId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string", "format": "uuid" }
-          }
-        ],
-        "responses": { "204": { "description": "No Content" } }
       }
     },
     "/ingredients/{ingredientId}": {
@@ -204,22 +244,162 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ingredient returned",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/IngredientDTO" }
               }
             }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["ingredient-controller"],
+        "summary": "Deletes ingredient",
+        "description": "Deletes an unused ingredient. Repeated requests return no content.",
+        "operationId": "deleteIngredient",
+        "parameters": [
+          {
+            "name": "ingredientId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
           }
+        ],
+        "responses": {
+          "204": { "description": "Ingredient deleted or already absent" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      },
+      "patch": {
+        "tags": ["ingredient-controller"],
+        "summary": "Updates ingredient",
+        "operationId": "updateIngredient",
+        "parameters": [
+          {
+            "name": "ingredientId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateIngredientRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ingredient updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IngredientDTO" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
+    "/ingredients/search": {
+      "get": {
+        "tags": ["ingredient-controller"],
+        "summary": "Search ingredients",
+        "operationId": "searchIngredients",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Case-insensitive name fragment",
+            "required": true,
+            "schema": { "type": "string", "maxLength": 255, "minLength": 1 }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": { "type": "integer", "default": 0, "minimum": 0 }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": { "type": "integer", "default": 20, "minimum": 1 }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": { "type": "array", "items": { "type": "string" } }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching ingredients returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseIngredientDTO"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
         }
       }
     }
   },
   "components": {
     "schemas": {
-      "CreateRecipeIngredientRequest": {
+      "ProblemDetail": {
+        "properties": {
+          "type": { "type": "string", "format": "uri" },
+          "title": { "type": "string" },
+          "status": { "type": "integer", "format": "int32" },
+          "detail": { "type": "string" },
+          "instance": { "type": "string", "format": "uri" },
+          "properties": {
+            "type": "object",
+            "additionalProperties": { "type": "object" }
+          }
+        }
+      },
+      "BadRequestProblemDetail": {
+        "properties": {
+          "type": { "type": "string", "format": "uri" },
+          "title": { "type": "string" },
+          "status": { "type": "integer", "format": "int32" },
+          "detail": { "type": "string" },
+          "instance": { "type": "string", "format": "uri" },
+          "properties": {
+            "type": "object",
+            "additionalProperties": { "type": "object" }
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "description": "Validation messages keyed by request field"
+            },
+            "description": "Validation messages keyed by request field"
+          }
+        }
+      },
+      "UpdateRecipeIngredientRequest": {
         "type": "object",
         "properties": {
+          "id": { "type": "string", "format": "uuid" },
           "ingredientId": { "type": "string", "format": "uuid" },
           "amount": { "type": "number" },
           "unit": { "type": "string", "maxLength": 64, "minLength": 0 },
@@ -227,7 +407,7 @@
         },
         "required": ["amount", "ingredientId", "unit"]
       },
-      "CreateRecipeRequest": {
+      "UpdateRecipeRequest": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "maxLength": 255, "minLength": 0 },
@@ -245,21 +425,22 @@
           "sections": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CreateRecipeSectionRequest"
+              "$ref": "#/components/schemas/UpdateRecipeSectionRequest"
             },
             "minItems": 1
           }
         },
         "required": ["description", "imageUrl", "name", "sections"]
       },
-      "CreateRecipeSectionRequest": {
+      "UpdateRecipeSectionRequest": {
         "type": "object",
         "properties": {
+          "id": { "type": "string", "format": "uuid" },
           "name": { "type": "string", "maxLength": 255, "minLength": 0 },
           "ingredients": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CreateRecipeIngredientRequest"
+              "$ref": "#/components/schemas/UpdateRecipeIngredientRequest"
             },
             "minItems": 1
           }
@@ -315,10 +496,59 @@
         },
         "required": ["id", "ingredients", "name", "position"]
       },
+      "CreateRecipeIngredientRequest": {
+        "type": "object",
+        "properties": {
+          "ingredientId": { "type": "string", "format": "uuid" },
+          "amount": { "type": "number" },
+          "unit": { "type": "string", "maxLength": 64, "minLength": 0 },
+          "note": { "type": "string", "maxLength": 500, "minLength": 0 }
+        },
+        "required": ["amount", "ingredientId", "unit"]
+      },
+      "CreateRecipeRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "imageUrl": {
+            "type": "string",
+            "maxLength": 2048,
+            "minLength": 0,
+            "pattern": "^(https?://).*$"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000,
+            "minLength": 0
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateRecipeSectionRequest"
+            },
+            "minItems": 1
+          }
+        },
+        "required": ["description", "imageUrl", "name", "sections"]
+      },
+      "CreateRecipeSectionRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateRecipeIngredientRequest"
+            },
+            "minItems": 1
+          }
+        },
+        "required": ["ingredients", "name"]
+      },
       "CreateIngredientRequest": {
         "type": "object",
         "properties": {
-          "name": { "type": "string", "maxLength": 255, "minLength": 0 }
+          "name": { "type": "string", "maxLength": 255, "minLength": 1 }
         },
         "required": ["name"]
       },
@@ -329,6 +559,17 @@
           "name": { "type": "string" }
         },
         "required": ["id", "name"]
+      },
+      "UpdateIngredientRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": ["string", "null"],
+            "maxLength": 255,
+            "minLength": 1,
+            "pattern": "(?s).*\\S.*"
+          }
+        }
       },
       "PageMetadata": {
         "type": "object",
@@ -380,6 +621,32 @@
           "page": { "$ref": "#/components/schemas/PageMetadata" }
         },
         "required": ["content", "page"]
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Request validation failed",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/BadRequestProblemDetail" }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Requested resource was not found",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ProblemDetail" }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Request conflicts with current resource state",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ProblemDetail" }
+          }
+        }
       }
     }
   }

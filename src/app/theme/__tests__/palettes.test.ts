@@ -6,11 +6,8 @@ import { describe, expect, it } from 'vitest'
 import css from '../../../index.css?raw'
 import { PALETTE_MODES, PALETTE_VALUES } from '../palettes'
 
-// Every palette/mode block in src/index.css is standalone: nothing falls back
-// to another block, so a token missing from one of them renders as an unset
-// value rather than as another palette's color. This test is the guard — it
-// fails the moment the blocks stop declaring the same token names, or the CSS
-// stops matching the modes PALETTE_MODES promises.
+// Blocks in src/index.css are standalone, so a token missing from one renders
+// unset rather than falling back. This is the guard against that drift.
 
 function selectorFor(palette: string, mode: string): string {
   const base = `[data-palette='${palette}']`
@@ -48,8 +45,9 @@ describe('palette tokens', () => {
     }
   })
 
-  // A block for a mode a palette does not ship is dead code that would quietly
-  // come back to life the day the palette gains that mode.
+  // A light block for a dark-only palette is not merely unused: its selector
+  // matches in dark mode too, so every token the dark block omits falls back to
+  // it. No other test looks here — the rest iterate PALETTE_MODES.
   it.each(PALETTE_VALUES)(
     '%s ships no block outside PALETTE_MODES',
     (palette) => {

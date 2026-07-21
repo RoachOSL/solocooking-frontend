@@ -4,8 +4,27 @@ import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOption
 import type { AxiosError } from 'axios';
 
 import { client } from '../client.gen';
-import { createIngredient, createRecipe, deleteRecipe, getIngredient, getIngredients, getRecipe, getRecipes, type Options } from '../sdk.gen';
-import type { CreateIngredientData, CreateIngredientResponse, CreateRecipeData, CreateRecipeResponse, DeleteRecipeData, DeleteRecipeResponse, GetIngredientData, GetIngredientResponse, GetIngredientsData, GetIngredientsResponse, GetRecipeData, GetRecipeResponse, GetRecipesData, GetRecipesResponse } from '../types.gen';
+import { createIngredient, createRecipe, deleteIngredient, deleteRecipe, getIngredient, getIngredients, getRecipe, getRecipes, type Options, searchIngredients, updateIngredient, updateRecipe } from '../sdk.gen';
+import type { CreateIngredientData, CreateIngredientError, CreateIngredientResponse, CreateRecipeData, CreateRecipeError, CreateRecipeResponse, DeleteIngredientData, DeleteIngredientError, DeleteIngredientResponse, DeleteRecipeData, DeleteRecipeResponse, GetIngredientData, GetIngredientError, GetIngredientResponse, GetIngredientsData, GetIngredientsResponse, GetRecipeData, GetRecipeError, GetRecipeResponse, GetRecipesData, GetRecipesResponse, SearchIngredientsData, SearchIngredientsError, SearchIngredientsResponse, UpdateIngredientData, UpdateIngredientError, UpdateIngredientResponse, UpdateRecipeData, UpdateRecipeError, UpdateRecipeResponse } from '../types.gen';
+
+/**
+ * Delete recipe by id
+ *
+ * Deletes the recipe when it exists. Repeated requests return no content.
+ */
+export const deleteRecipeMutation = (options?: Partial<Options<DeleteRecipeData>>): UseMutationOptions<DeleteRecipeResponse, AxiosError<DefaultError>, Options<DeleteRecipeData>> => {
+    const mutationOptions: UseMutationOptions<DeleteRecipeResponse, AxiosError<DefaultError>, Options<DeleteRecipeData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteRecipe({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseURL' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -38,6 +57,43 @@ const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions
         params.query = options.query;
     }
     return [params];
+};
+
+export const getRecipeQueryKey = (options: Options<GetRecipeData>) => createQueryKey('getRecipe', options);
+
+/**
+ * Get recipe by id
+ *
+ * Returns a recipe for given id
+ */
+export const getRecipeOptions = (options: Options<GetRecipeData>) => queryOptions<GetRecipeResponse, AxiosError<GetRecipeError>, GetRecipeResponse, ReturnType<typeof getRecipeQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getRecipe({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getRecipeQueryKey(options)
+});
+
+/**
+ * Updates entire recipe
+ */
+export const updateRecipeMutation = (options?: Partial<Options<UpdateRecipeData>>): UseMutationOptions<UpdateRecipeResponse, AxiosError<UpdateRecipeError>, Options<UpdateRecipeData>> => {
+    const mutationOptions: UseMutationOptions<UpdateRecipeResponse, AxiosError<UpdateRecipeError>, Options<UpdateRecipeData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await updateRecipe({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
 };
 
 export const getRecipesQueryKey = (options?: Options<GetRecipesData>) => createQueryKey('getRecipes', options);
@@ -124,8 +180,8 @@ export const getRecipesInfiniteOptions = (options?: Options<GetRecipesData>) => 
 /**
  * Creates new recipe
  */
-export const createRecipeMutation = (options?: Partial<Options<CreateRecipeData>>): UseMutationOptions<CreateRecipeResponse, AxiosError<DefaultError>, Options<CreateRecipeData>> => {
-    const mutationOptions: UseMutationOptions<CreateRecipeResponse, AxiosError<DefaultError>, Options<CreateRecipeData>> = {
+export const createRecipeMutation = (options?: Partial<Options<CreateRecipeData>>): UseMutationOptions<CreateRecipeResponse, AxiosError<CreateRecipeError>, Options<CreateRecipeData>> => {
+    const mutationOptions: UseMutationOptions<CreateRecipeResponse, AxiosError<CreateRecipeError>, Options<CreateRecipeData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await createRecipe({
                 ...options,
@@ -189,8 +245,8 @@ export const getIngredientsInfiniteOptions = (options?: Options<GetIngredientsDa
 /**
  * Creates new ingredient
  */
-export const createIngredientMutation = (options?: Partial<Options<CreateIngredientData>>): UseMutationOptions<CreateIngredientResponse, AxiosError<DefaultError>, Options<CreateIngredientData>> => {
-    const mutationOptions: UseMutationOptions<CreateIngredientResponse, AxiosError<DefaultError>, Options<CreateIngredientData>> = {
+export const createIngredientMutation = (options?: Partial<Options<CreateIngredientData>>): UseMutationOptions<CreateIngredientResponse, AxiosError<CreateIngredientError>, Options<CreateIngredientData>> => {
+    const mutationOptions: UseMutationOptions<CreateIngredientResponse, AxiosError<CreateIngredientError>, Options<CreateIngredientData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await createIngredient({
                 ...options,
@@ -204,14 +260,14 @@ export const createIngredientMutation = (options?: Partial<Options<CreateIngredi
 };
 
 /**
- * Delete recipe by id
+ * Deletes ingredient
  *
- * Deletes the recipe when it exists. Repeated requests return no content.
+ * Deletes an unused ingredient. Repeated requests return no content.
  */
-export const deleteRecipeMutation = (options?: Partial<Options<DeleteRecipeData>>): UseMutationOptions<DeleteRecipeResponse, AxiosError<DefaultError>, Options<DeleteRecipeData>> => {
-    const mutationOptions: UseMutationOptions<DeleteRecipeResponse, AxiosError<DefaultError>, Options<DeleteRecipeData>> = {
+export const deleteIngredientMutation = (options?: Partial<Options<DeleteIngredientData>>): UseMutationOptions<DeleteIngredientResponse, AxiosError<DeleteIngredientError>, Options<DeleteIngredientData>> => {
+    const mutationOptions: UseMutationOptions<DeleteIngredientResponse, AxiosError<DeleteIngredientError>, Options<DeleteIngredientData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await deleteRecipe({
+            const { data } = await deleteIngredient({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -222,32 +278,12 @@ export const deleteRecipeMutation = (options?: Partial<Options<DeleteRecipeData>
     return mutationOptions;
 };
 
-export const getRecipeQueryKey = (options: Options<GetRecipeData>) => createQueryKey('getRecipe', options);
-
-/**
- * Get recipe by id
- *
- * Returns a recipe for given id
- */
-export const getRecipeOptions = (options: Options<GetRecipeData>) => queryOptions<GetRecipeResponse, AxiosError<DefaultError>, GetRecipeResponse, ReturnType<typeof getRecipeQueryKey>>({
-    queryFn: async ({ queryKey, signal }) => {
-        const { data } = await getRecipe({
-            ...options,
-            ...queryKey[0],
-            signal,
-            throwOnError: true
-        });
-        return data;
-    },
-    queryKey: getRecipeQueryKey(options)
-});
-
 export const getIngredientQueryKey = (options: Options<GetIngredientData>) => createQueryKey('getIngredient', options);
 
 /**
  * Get ingredient by id
  */
-export const getIngredientOptions = (options: Options<GetIngredientData>) => queryOptions<GetIngredientResponse, AxiosError<DefaultError>, GetIngredientResponse, ReturnType<typeof getIngredientQueryKey>>({
+export const getIngredientOptions = (options: Options<GetIngredientData>) => queryOptions<GetIngredientResponse, AxiosError<GetIngredientError>, GetIngredientResponse, ReturnType<typeof getIngredientQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
         const { data } = await getIngredient({
             ...options,
@@ -259,3 +295,68 @@ export const getIngredientOptions = (options: Options<GetIngredientData>) => que
     },
     queryKey: getIngredientQueryKey(options)
 });
+
+/**
+ * Updates ingredient
+ */
+export const updateIngredientMutation = (options?: Partial<Options<UpdateIngredientData>>): UseMutationOptions<UpdateIngredientResponse, AxiosError<UpdateIngredientError>, Options<UpdateIngredientData>> => {
+    const mutationOptions: UseMutationOptions<UpdateIngredientResponse, AxiosError<UpdateIngredientError>, Options<UpdateIngredientData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await updateIngredient({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const searchIngredientsQueryKey = (options: Options<SearchIngredientsData>) => createQueryKey('searchIngredients', options);
+
+/**
+ * Search ingredients
+ */
+export const searchIngredientsOptions = (options: Options<SearchIngredientsData>) => queryOptions<SearchIngredientsResponse, AxiosError<SearchIngredientsError>, SearchIngredientsResponse, ReturnType<typeof searchIngredientsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await searchIngredients({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: searchIngredientsQueryKey(options)
+});
+
+export const searchIngredientsInfiniteQueryKey = (options: Options<SearchIngredientsData>): QueryKey<Options<SearchIngredientsData>> => createQueryKey('searchIngredients', options, true);
+
+/**
+ * Search ingredients
+ */
+export const searchIngredientsInfiniteOptions = (options: Options<SearchIngredientsData>) => {
+    const opts = infiniteQueryOptions<SearchIngredientsResponse, AxiosError<SearchIngredientsError>, InfiniteData<SearchIngredientsResponse>, QueryKey<Options<SearchIngredientsData>>, number | Pick<QueryKey<Options<SearchIngredientsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<SearchIngredientsData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    page: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await searchIngredients({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: searchIngredientsInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};

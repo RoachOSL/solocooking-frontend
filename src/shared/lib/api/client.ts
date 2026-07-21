@@ -12,7 +12,7 @@ export const apiClient = axios.create({
   headers: { Accept: 'application/json' },
 })
 
-// Request interceptor — single place to attach the auth token once auth lands.
+// Where the auth token attaches once auth lands.
 apiClient.interceptors.request.use((config) => {
   const token = getAuthToken()
   if (token) {
@@ -21,8 +21,7 @@ apiClient.interceptors.request.use((config) => {
   return config
 })
 
-// Response interceptor — normalize errors to AppError. Extend later for 401
-// refresh.
+// Extend for 401 refresh when auth lands.
 apiClient.interceptors.response.use(
   (response) => response,
   (error: unknown) => Promise.reject(toAppError(error)),

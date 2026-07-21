@@ -16,8 +16,13 @@ repository here.
 ## OpenAPI codegen flow
 
 - Spec snapshot committed as `openapi.json` in this repo:
-  - `npm run spec:update` — pulls `http://localhost:8080/api/v3/api-docs`
-    (backend must be running; note the `/api` servlet path).
+  - `npm run spec:update` — pulls
+    `http://localhost:8080/api/v3/api-docs/soloprogramming` (backend must be
+    running; note the `/api` servlet path and the grouped-spec suffix — the
+    bare `/v3/api-docs` path serves a different document).
+  - Spring returns minified JSON, so run `npm run format` straight after:
+    the snapshot is committed Prettier-formatted, which is what keeps contract
+    diffs readable.
   - `npm run generate` — Hey API reads the local snapshot; works offline.
   - Snapshot + generated output are committed, so PR diffs show contract
     changes and CI never needs a running Spring app.
@@ -93,6 +98,78 @@ repository here.
 - Background embers are part of the palette (`EMBER_PRESETS`), not a user
   setting: fire over cast iron, mana over navy. Users only get an on/off
   toggle; `prefers-reduced-motion` disables them regardless.
+
+## UI work
+
+- New UI or a visual reshape of existing UI starts with the
+  `frontend-design` skill, before writing markup. It covers aesthetic
+  direction, typography and spacing choices, and keeps output from settling
+  into templated defaults — which matters here because the look is the
+  product identity, not a wrapper around the API.
+- Applies to visual work only. Plumbing changes — codegen refresh, query
+  wiring, routing, tests — skip it.
+- Skill guidance never outranks this file: the palette rules under _Theming_
+  win when the two disagree.
+
+## Grids fill whole rows
+
+- Page size and column counts are one decision, not two. A list page must never
+  end a full page on a part-row: `PAGE_SIZE` is divisible by **every** column
+  count the grid declares, at every breakpoint. It is not enough for the number
+  to work on the developer's monitor — which breakpoint a ragged row bites at
+  depends on the reader's window.
+- That constraint picks the column ladder, not the other way round. The
+  ingredient catalog runs 1 / 2 / 3 / 5 with `PAGE_SIZE` 30 (six full rows at
+  the widest tier). Four columns are deliberately absent: 30 does not divide
+  by 4. Wanting a different ladder means changing the page size to match.
+- Placeholder counts follow the same rule — a skeleton that ends on a part-row
+  is the same defect arriving a moment earlier. Each breakpoint's visible
+  placeholders are a whole number of rows.
+- The list of placeholder bar widths must share no factor with any column
+  count, or every width parks in a fixed column and the placeholders read as
+  vertical stripes. Seven widths against 1 / 2 / 3 / 5 columns.
+- All of it lives in `src/features/ingredients/catalogGrid.ts` and is enforced
+  by `__tests__/catalogGrid.test.ts`, which parses the column counts out of the
+  class list rather than restating them: adding a breakpoint to the grid gets
+  it checked without touching the test.
+
+## Palette changes need approval
+
+- Nobody edits a palette value without the owner agreeing to it first. This
+  covers every color token in `src/index.css` — `--background`, `--card`,
+  `--muted`, `--border`, `--primary`, `--accent`, `--highlight`, the flash
+  gradient, the card shadow — in any palette or mode. The palette is the
+  product identity, not a variable to tune while fixing something else.
+- Design feedback about contrast or hierarchy is a reason to **propose** a
+  change, never to make one. Feedback like "too many similar browns" gets a
+  proposal, not a commit.
+- A proposal states, per token: current value, proposed value, what visibly
+  changes, and which screens it touches. Palette tokens are global — one value
+  moves every page at once, so "it looked better on this screen" is not a
+  justification on its own.
+- Layout, spacing, typography, and which token an element references are
+  ordinary work and need no approval. Changing what a token _is_ does.
+  Swapping `bg-muted` for `bg-card` on one element: fine. Changing what
+  `--muted` means: ask.
+
+## Loading feedback
+
+- `src/app/GlobalLoadingBar.tsx` sits on the header's bottom border and is the
+  app's only global "working" signal. It shows after 250 ms and stays at least
+  400 ms. Colour comes from `--primary`, so all three looks are covered with no
+  branching on the palette; the sweep is `.loading-sweep` in `src/index.css`.
+- `shared/components/ui/skeleton.tsx` is the placeholder primitive. The
+  ingredient catalog uses it via `CatalogSkeleton`, which shares `CARD_GRID`
+  with the real list and hides placeholders past each breakpoint's screenful.
+  `SKELETON_COUNT` is `PAGE_SIZE`, never a literal — see _Grids fill whole
+  rows_.
+- Ingredient list and search hold previous results (`KEEP_LIST_ON_SCREEN` in
+  `hooks/useIngredients.ts`) and dim to 60% while stale. The skeleton is then
+  reached only on a genuine first load. Covered by "keeps the previous results
+  on screen while the next search loads" — removing `keepPreviousData` has no
+  other visible symptom.
+- The home page shows no bar because it issues no requests: everything below
+  its hero is still mocked.
 
 ## Decisions queued for later (with leaning)
 

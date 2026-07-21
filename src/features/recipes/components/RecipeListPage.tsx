@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from '@/shared/components/ui/card'
 import { Button } from '@/shared/components/ui/button'
+import { PageSection } from '@/shared/components/PageSection'
 import { useRecipes } from '../hooks/useRecipes'
 
 const PAGE_SIZE = 20
@@ -24,7 +25,7 @@ export function RecipeListPage() {
   })
 
   return (
-    <section className="mx-auto max-w-5xl p-6">
+    <PageSection>
       <h1 className="mb-6 text-3xl font-semibold tracking-tight">Recipes</h1>
 
       {isPending && <p className="text-muted-foreground">Loading recipes…</p>}
@@ -44,7 +45,7 @@ export function RecipeListPage() {
 
       {data && data.content.length > 0 && (
         <>
-          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {data.content.map((recipe) => (
               <li key={recipe.id}>
                 <Link to={`/recipes/${recipe.id}`} className="block h-full">
@@ -94,6 +95,6 @@ export function RecipeListPage() {
           </div>
         </>
       )}
-    </section>
+    </PageSection>
   )
 }
