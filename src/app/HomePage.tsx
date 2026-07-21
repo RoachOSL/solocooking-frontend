@@ -16,9 +16,8 @@ import { PageSection } from '@/shared/components/PageSection'
 import { SearchField } from '@/shared/components/SearchField'
 import { Badge } from '@/shared/components/ui/badge'
 
-// Everything below the hero is a mocked placeholder: search, daily quest,
-// counters and recent recipes render static data until the backend grows the
-// matching endpoints (or the sections get cut).
+// Everything below the hero renders static data until the backend grows the
+// matching endpoints, or the sections get cut.
 
 const mockRecentRecipes = [
   {

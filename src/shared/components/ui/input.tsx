@@ -6,10 +6,8 @@ import * as React from 'react'
 
 import { cn } from '@/shared/lib/utils'
 
-// The box every form control sits in — height, border, focus ring, disabled and
-// invalid states. Exported so a control this file does not own (a native
-// `<select>`, a future textarea) matches the text input by referencing it,
-// instead of by a copy of its class list that silently stops matching.
+// Exported so a control this file does not own (a native `<select>`, a future
+// textarea) matches the text input by reference, not by a copy of its classes.
 export const FIELD_SHELL = cn(
   'h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30',
   'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',

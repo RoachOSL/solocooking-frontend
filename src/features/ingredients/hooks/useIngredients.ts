@@ -27,18 +27,15 @@ export type SearchIngredientsParams = Omit<
   'name'
 >
 
-// Both lists go stale on any write, across every page and search term. Matching
-// on the generated `_id` covers them without inventing the params each key would
-// otherwise need.
+// Any write stales both lists across every page and term. Matching on the
+// generated `_id` covers them without restating each key's params.
 function isIngredientList(queryKey: QueryKey) {
   const { _id: id } = queryKey[0] as { _id?: string }
   return id === 'getIngredients' || id === 'searchIngredients'
 }
 
-// Page and term are part of the query key, so every keystroke and page turn is
-// a fresh query with no data of its own. Without this the list empties while it
-// is being read; the global loading bar carries the fact that a request is in
-// flight.
+// Page and term are part of the query key, so without this every keystroke
+// empties the list while it is being read.
 const KEEP_LIST_ON_SCREEN = { placeholderData: keepPreviousData }
 
 export function useIngredients(params: GetIngredientsParams = {}) {

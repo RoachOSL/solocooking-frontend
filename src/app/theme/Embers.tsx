@@ -37,8 +37,8 @@ function paletteToken(name: string): string {
     .trim()
 }
 
-// Fire and mana hues are deliberate literals: embers stay fire-colored and
-// mana stays blue-violet on every palette.
+// Fire and mana hues are literals on purpose: they stay themselves on every
+// palette.
 function colorsFor(mode: EmberColorMode): string[] {
   switch (mode) {
     case 'primary':
@@ -83,9 +83,7 @@ interface EmbersProps {
   colorMode: EmberColorMode
 }
 
-// Decorative slow-rising embers behind the whole app. Renders nothing when
-// the user prefers reduced motion or density is off. Palette-derived colors
-// are sampled when the effect (re)starts.
+// Palette-derived colors are sampled when the effect (re)starts.
 export function Embers({ density, colorMode }: EmbersProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 

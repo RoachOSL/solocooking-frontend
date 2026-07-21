@@ -16,12 +16,10 @@ export class AppError extends Error {
   }
 }
 
-// The backend tags every failure it raises deliberately with a ProblemDetail
-// `type` URN, which is what separates conditions sharing a status code: both
-// entries below are 409. Mapping on the URN keeps that distinction machine-
-// readable — matching on `detail` prose would break on a wording change, and
-// matching on the call site goes stale the day an operation gains a second
-// reason to conflict.
+// Both entries below are 409; the ProblemDetail `type` URN is what tells them
+// apart. Matching on `detail` prose would break on a wording change, and
+// matching on the call site goes stale once an operation gains a second reason
+// to conflict.
 const MESSAGE_BY_TYPE: Record<string, string> = {
   'urn:solocooking:error:ingredient-already-exists':
     'That name is already taken.',

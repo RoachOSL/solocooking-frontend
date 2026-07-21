@@ -32,8 +32,7 @@ function navLinkClass({ isActive }: { isActive: boolean }) {
 }
 
 export default function App() {
-  // The inline script in index.html already applied the stored palette; this
-  // only mirrors it into React state.
+  // index.html already applied the stored palette; this only mirrors it.
   const [palette, setPalette] = useState<PaletteValue>(readPalette)
   const { theme, setTheme } = useTheme()
   const [embersEnabled, setEmbersEnabled] = useState(
@@ -56,8 +55,8 @@ export default function App() {
     }
   }
 
-  // Going light drops any palette that has no light mode, rather than leaving
-  // the page with tokens that do not exist.
+  // Going light drops a palette that has no light mode, rather than leaving the
+  // page on tokens that do not exist.
   function toggleTheme() {
     const next = theme === 'dark' ? 'light' : 'dark'
     setTheme(next)
@@ -109,16 +108,12 @@ export default function App() {
         </nav>
         <GlobalLoadingBar />
       </header>
-      {/* flex-1 makes the content fill the shell, so a page shorter than the
-          window still reaches the bottom; pb-24 keeps the last block clear of
-          the glow, which opaque cards would otherwise cover. */}
+      {/* pb-24 keeps the last block clear of the glow below. */}
       <main className="relative z-10 flex-1 pb-24">
         <Outlet />
       </main>
-      {/* Anchored to the shell, which is never shorter than the window and
-          grows with the content — so "the foot of the page" means the same
-          thing on a short route and a long one, without gluing the glow to the
-          viewport and dragging it along on every scroll. */}
+      {/* Anchored to the shell rather than the viewport, so it sits at the foot
+          of the page instead of following the scroll. */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-48 bg-[radial-gradient(ellipse_at_bottom,color-mix(in_oklab,var(--color-primary)_16%,transparent),transparent_72%)]"

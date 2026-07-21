@@ -7,13 +7,10 @@ import { Search } from 'lucide-react'
 import { Input } from '@/shared/components/ui/input'
 import { cn } from '@/shared/lib/utils'
 
-// Search box with its leading icon: the icon's offset and the input's matching
-// left padding are one measurement, and two copies of it drift the first time
-// either side is touched.
-//
-// `className` styles the wrapper, which is what callers actually place
-// (`max-w-lg`, `flex-1`). `children` renders inside it, for an adornment the
-// field itself should not know about.
+// The icon's offset and the input's left padding are one measurement; two
+// copies drift. `className` styles the wrapper, since that is what callers
+// place; `children` renders inside it, for adornments the field itself should
+// not know about.
 export function SearchField({
   className,
   children,

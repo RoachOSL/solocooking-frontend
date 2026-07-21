@@ -24,9 +24,8 @@ const CARD_GRID =
 // Never more than a request can return, or the grid is guaranteed to collapse.
 const SKELETON_COUNT = PAGE_SIZE
 
-// How many placeholders fill a screen depends on columns, which CSS decides —
-// so CSS decides the count too, by hiding the ones past each breakpoint's
-// screenful. A full page is six rows on a desktop and twenty-four on a phone.
+// Columns are CSS's decision, so the count is too: everything past a
+// breakpoint's screenful is hidden rather than counted in JS.
 function skeletonVisibility(index: number) {
   if (index < 6) {
     return ''
@@ -111,8 +110,7 @@ export function IngredientListPage() {
           placeholder="Search or add an ingredient…"
           className="min-w-64 flex-1"
         />
-        {/* The one strong call to action on the page: the search box beside it
-            is a surface, not a competing button. */}
+        {/* The page's one strong call to action. */}
         <Button className="h-12 px-6" onClick={() => setCreating(true)}>
           <Plus aria-hidden className="size-4" />
           {canAdd ? `Add ${normalized}` : 'New ingredient'}
@@ -156,9 +154,8 @@ export function IngredientListPage() {
                     onClick={() => setEditing(ingredient)}
                     className="group flex w-full items-center gap-3 rounded-lg border bg-card p-2 text-left shadow-card transition-colors hover:border-ring hover:bg-accent"
                   >
-                    {/* Holds the shape a photo will take. The catalog stores
-                        only a name today, so the frame stays reserved rather
-                        than reflowing the grid once photos land. */}
+                    {/* Frame reserved for the photo the catalog cannot store
+                        yet, so the grid will not reflow once it can. */}
                     <span className="flex size-12 shrink-0 items-center justify-center rounded-md border bg-muted">
                       <ImagePlus
                         aria-hidden

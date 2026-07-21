@@ -42,9 +42,8 @@ function useSustained(active: boolean) {
   return visible
 }
 
-// Answers "is anything happening at all" for the whole app: it counts Query's
-// fetches and mutations, so a new feature is covered without wiring. A screen
-// with more to say about its own loading says it in place.
+// Counts Query's fetches and mutations, so a new feature is covered without
+// wiring. A screen with more to say about its loading says it in place.
 export function GlobalLoadingBar() {
   const busy = useIsFetching() + useIsMutating() > 0
   const visible = useSustained(busy)

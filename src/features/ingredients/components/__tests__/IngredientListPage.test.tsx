@@ -47,16 +47,14 @@ describe('IngredientListPage', () => {
     )
   })
 
-  // Without keepPreviousData every search term empties the list and shows the
-  // skeleton, so results vanish while they are being read. Removing that option
-  // has no other visible symptom.
+  // Removing keepPreviousData has no symptom other than this one.
   it('keeps the previous results on screen while the next search loads', async () => {
     renderPage()
     await screen.findByText('black pepper')
 
     typeSearch('pepper')
-    // 'olive oil' leaving is what proves the search ran — both peppers are also
-    // in the unfiltered catalog, so finding one would pass before it did.
+    // Both peppers are in the unfiltered catalog too, so only 'olive oil'
+    // leaving proves the search actually ran.
     await waitFor(() =>
       expect(screen.queryByText('olive oil')).not.toBeInTheDocument(),
     )

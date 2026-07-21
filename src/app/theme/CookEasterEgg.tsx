@@ -10,8 +10,7 @@ interface CookEasterEggProps {
   onCook: () => void
 }
 
-// The flash doubles as cover for whatever the parent hangs on onCook, which is
-// currently a palette swap.
+// The flash doubles as cover for whatever the parent hangs on onCook.
 export function CookEasterEgg({ onCook }: CookEasterEggProps) {
   const [flashing, setFlashing] = useState(false)
 
@@ -31,8 +30,8 @@ export function CookEasterEgg({ onCook }: CookEasterEggProps) {
       >
         <CookingPot aria-hidden className="size-5" />
       </button>
-      {/* Portalled to body: the flash lives in the header, whose own z-index
-          traps any stacking done inside it below the page content. */}
+      {/* Portalled out of the header, whose z-index would trap the flash below
+          the page content. */}
       {flashing &&
         createPortal(
           <div

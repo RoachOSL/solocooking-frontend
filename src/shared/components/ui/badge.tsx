@@ -7,9 +7,8 @@ import { Slot } from 'radix-ui'
 
 import { cn } from '@/shared/lib/utils'
 
-// The pill that marks a small piece of status: a level, a reward, a field the
-// backend does not store yet. One definition, because four hand-written copies
-// had already drifted apart on padding and weight.
+// One definition for the status pill — four hand-written copies had already
+// drifted apart on padding and weight.
 function Badge({
   className,
   asChild = false,

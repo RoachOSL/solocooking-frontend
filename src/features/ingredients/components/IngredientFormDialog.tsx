@@ -29,10 +29,8 @@ import {
 } from '../hooks/useIngredients'
 import { normalizeName } from '../normalizeName'
 
-// The contract accepts a name and nothing else. Photo and unit are laid out
-// now and marked so, rather than collected and silently dropped — the backend
-// grows into them, at which point the badge comes off and the value joins the
-// request body.
+// The contract accepts a name and nothing else. Photo and unit are laid out and
+// marked "Soon" rather than collected and silently dropped.
 const UNITS = [
   'g',
   'kg',
