@@ -11,37 +11,16 @@ import { Skeleton } from '@/shared/components/ui/skeleton'
 import { useDebouncedValue } from '@/shared/lib/useDebouncedValue'
 import { cn } from '@/shared/lib/utils'
 import type { IngredientDto } from '@/shared/lib/api/__generated__'
+import {
+  CARD_GRID,
+  PAGE_SIZE,
+  SKELETON_COUNT,
+  SKELETON_WIDTHS,
+  skeletonVisibility,
+} from '../catalogGrid'
 import { useIngredientSearch, useIngredients } from '../hooks/useIngredients'
 import { normalizeName } from '../normalizeName'
 import { IngredientFormDialog } from './IngredientFormDialog'
-
-const PAGE_SIZE = 24
-
-// Shared with the placeholders below, so they keep predicting where cards land.
-const CARD_GRID =
-  'grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'
-
-// Never more than a request can return, or the grid is guaranteed to collapse.
-const SKELETON_COUNT = PAGE_SIZE
-
-// Columns are CSS's decision, so the count is too: everything past a
-// breakpoint's screenful is hidden rather than counted in JS.
-function skeletonVisibility(index: number) {
-  if (index < 6) {
-    return ''
-  }
-  if (index < 8) {
-    return 'hidden sm:flex'
-  }
-  if (index < 12) {
-    return 'hidden lg:flex'
-  }
-  return 'hidden xl:flex'
-}
-
-// Bars of one width read as a table, which is not what arrives. Cycled, so the
-// count above stays the only number to change.
-const SKELETON_WIDTHS = ['w-24', 'w-32', 'w-20', 'w-28', 'w-36', 'w-24']
 
 function CatalogSkeleton() {
   return (

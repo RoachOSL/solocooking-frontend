@@ -45,7 +45,9 @@ describe('palette tokens', () => {
     }
   })
 
-  // Dead block today, live block the day the palette gains that mode.
+  // A light block for a dark-only palette is not merely unused: its selector
+  // matches in dark mode too, so every token the dark block omits falls back to
+  // it. No other test looks here — the rest iterate PALETTE_MODES.
   it.each(PALETTE_VALUES)(
     '%s ships no block outside PALETTE_MODES',
     (palette) => {

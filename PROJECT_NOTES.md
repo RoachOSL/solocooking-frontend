@@ -111,6 +111,28 @@ repository here.
 - Skill guidance never outranks this file: the palette rules under _Theming_
   win when the two disagree.
 
+## Grids fill whole rows
+
+- Page size and column counts are one decision, not two. A list page must never
+  end a full page on a part-row: `PAGE_SIZE` is divisible by **every** column
+  count the grid declares, at every breakpoint. It is not enough for the number
+  to work on the developer's monitor — which breakpoint a ragged row bites at
+  depends on the reader's window.
+- That constraint picks the column ladder, not the other way round. The
+  ingredient catalog runs 1 / 2 / 3 / 5 with `PAGE_SIZE` 30 (six full rows at
+  the widest tier). Four columns are deliberately absent: 30 does not divide
+  by 4. Wanting a different ladder means changing the page size to match.
+- Placeholder counts follow the same rule — a skeleton that ends on a part-row
+  is the same defect arriving a moment earlier. Each breakpoint's visible
+  placeholders are a whole number of rows.
+- The list of placeholder bar widths must share no factor with any column
+  count, or every width parks in a fixed column and the placeholders read as
+  vertical stripes. Seven widths against 1 / 2 / 3 / 5 columns.
+- All of it lives in `src/features/ingredients/catalogGrid.ts` and is enforced
+  by `__tests__/catalogGrid.test.ts`, which parses the column counts out of the
+  class list rather than restating them: adding a breakpoint to the grid gets
+  it checked without touching the test.
+
 ## Palette changes need approval
 
 - Nobody edits a palette value without the owner agreeing to it first. This
@@ -138,8 +160,9 @@ repository here.
   branching on the palette; the sweep is `.loading-sweep` in `src/index.css`.
 - `shared/components/ui/skeleton.tsx` is the placeholder primitive. The
   ingredient catalog uses it via `CatalogSkeleton`, which shares `CARD_GRID`
-  with the real list and hides placeholders past each breakpoint's screenful
-  (6 / 8 / 12 / 24). `SKELETON_COUNT` is `PAGE_SIZE`, never a literal.
+  with the real list and hides placeholders past each breakpoint's screenful.
+  `SKELETON_COUNT` is `PAGE_SIZE`, never a literal — see _Grids fill whole
+  rows_.
 - Ingredient list and search hold previous results (`KEEP_LIST_ON_SCREEN` in
   `hooks/useIngredients.ts`) and dim to 60% while stale. The skeleton is then
   reached only on a genuine first load. Covered by "keeps the previous results
