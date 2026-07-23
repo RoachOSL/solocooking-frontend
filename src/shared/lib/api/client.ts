@@ -9,6 +9,8 @@ export const API_BASE_URL = '/api'
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
+  // Axios has no default timeout; without this a stalled request never settles.
+  timeout: 15000,
   headers: { Accept: 'application/json' },
 })
 

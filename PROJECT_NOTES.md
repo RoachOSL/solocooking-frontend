@@ -171,6 +171,30 @@ repository here.
 - The home page shows no bar because it issues no requests: everything below
   its hero is still mocked.
 
+## Mutation feedback
+
+- Toast library is **sonner**. The wrapper is `shared/components/ui/sonner.tsx`
+  (thin, styled to design tokens); it takes `theme` as a prop rather than a
+  theme hook, because `shared/` must not import from `app/`. Mounted once in
+  `App` (`<Toaster theme={theme} />`, `useTheme()`), which is the layout route,
+  so one mount covers every page.
+- Every mutation's outcome is reported from one place: the `MutationCache` on
+  the shared `QueryClient` (`shared/lib/api/queryClient.ts`). Cache-level
+  callbacks fire even after the triggering component unmounts, which
+  `.mutate(_, { onError })` does not — so a dialog that closes mid-request never
+  drops its result. Per-mutation copy rides `meta` (typed via a `Register`
+  augmentation): `successMessage` opts into a confirmation toast;
+  `toastError: false` suppresses the global error toast where the trigger shows
+  the error in place.
+- Ingredient create/update carry `toastError: false` (the dialog form stays
+  open and renders the error inline) and a `successMessage`. Ingredient delete
+  is optimistic (`onMutate`/`onError`/`onSettled` in `useIngredients.ts`): the
+  row leaves every cached list at once and the dialog closes immediately; a
+  server refusal rolls back from the snapshot and toasts. Applied to delete
+  only — not create (no server id yet) or the name form (validation must stay
+  in view). The layered rationale is in `ARCHITECTURE.md`
+  ("Async mutation feedback").
+
 ## Decisions queued for later (with leaning)
 
 | When               | Decision      | Leaning                                                                             |

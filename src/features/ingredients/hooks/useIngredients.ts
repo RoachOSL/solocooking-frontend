@@ -7,6 +7,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  type Query,
   type QueryKey,
 } from '@tanstack/react-query'
 import {
@@ -18,8 +19,12 @@ import {
 } from '@/shared/lib/api/__generated__/@tanstack/react-query.gen'
 import type {
   GetIngredientsData,
+  IngredientDto,
   SearchIngredientsData,
 } from '@/shared/lib/api/__generated__'
+
+// Only `content` matters for the optimistic removal; spreading keeps the rest.
+type IngredientListData = { content: IngredientDto[] }
 
 export type GetIngredientsParams = NonNullable<GetIngredientsData['query']>
 export type SearchIngredientsParams = Omit<
@@ -68,15 +73,55 @@ function useInvalidateIngredients() {
 
 export function useCreateIngredient() {
   const invalidate = useInvalidateIngredients()
-  return useMutation({ ...createIngredientMutation(), onSuccess: invalidate })
+  return useMutation({
+    ...createIngredientMutation(),
+    // Form shows the error inline, so suppress the global error toast.
+    meta: { successMessage: 'Ingredient added', toastError: false },
+    onSuccess: invalidate,
+  })
 }
 
 export function useUpdateIngredient() {
   const invalidate = useInvalidateIngredients()
-  return useMutation({ ...updateIngredientMutation(), onSuccess: invalidate })
+  return useMutation({
+    ...updateIngredientMutation(),
+    meta: { successMessage: 'Ingredient updated', toastError: false },
+    onSuccess: invalidate,
+  })
 }
 
 export function useDeleteIngredient() {
+  const queryClient = useQueryClient()
   const invalidate = useInvalidateIngredients()
-  return useMutation({ ...deleteIngredientMutation(), onSuccess: invalidate })
+  const listFilter = {
+    predicate: (query: Query) => isIngredientList(query.queryKey),
+  }
+  return useMutation({
+    ...deleteIngredientMutation(),
+    meta: { successMessage: 'Ingredient deleted' },
+    // Optimistically drop the row; onError restores the snapshot if the server
+    // refuses (e.g. the ingredient is used by a recipe).
+    onMutate: async (variables) => {
+      const { ingredientId } = variables.path
+      await queryClient.cancelQueries(listFilter)
+      const snapshots =
+        queryClient.getQueriesData<IngredientListData>(listFilter)
+      for (const [key, data] of snapshots) {
+        if (!data) {
+          continue
+        }
+        queryClient.setQueryData<IngredientListData>(key, {
+          ...data,
+          content: data.content.filter((item) => item.id !== ingredientId),
+        })
+      }
+      return { snapshots }
+    },
+    onError: (_error, _variables, context) => {
+      context?.snapshots.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data)
+      })
+    },
+    onSettled: invalidate,
+  })
 }
