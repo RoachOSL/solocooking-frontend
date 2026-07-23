@@ -4,7 +4,6 @@
 
 export { IngredientListPage } from './components/IngredientListPage'
 export {
-  useIngredients,
-  useIngredientSearch,
+  useIngredientCatalog,
   useCreateIngredient,
 } from './hooks/useIngredients'

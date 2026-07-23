@@ -26,7 +26,7 @@ export function CookEasterEgg({ onCook }: CookEasterEggProps) {
         type="button"
         aria-label="COOK"
         onClick={flash}
-        className="text-brand transition-transform hover:scale-110"
+        className="text-brand transition-transform hover:scale-110 motion-reduce:transition-none motion-reduce:hover:scale-100"
       >
         <CookingPot aria-hidden className="size-5" />
       </button>
@@ -38,7 +38,7 @@ export function CookEasterEgg({ onCook }: CookEasterEggProps) {
             aria-hidden
             className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center"
           >
-            <span className="animate-in fade-in zoom-in-50 flash-extrude -rotate-2 bg-[image:var(--flash-gradient)] bg-clip-text text-7xl font-black tracking-[0.25em] text-transparent uppercase italic duration-300 sm:text-9xl">
+            <span className="animate-in fade-in zoom-in-50 flash-extrude -rotate-2 bg-[image:var(--flash-gradient)] bg-clip-text text-7xl font-black tracking-[0.25em] text-transparent uppercase italic duration-300 motion-reduce:animate-none sm:text-9xl">
               COOK!
             </span>
           </div>,

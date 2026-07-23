@@ -215,6 +215,44 @@ describe('IngredientListPage', () => {
     ).toBeInTheDocument()
   })
 
+  it('steps back to a populated page when the last row of a page is deleted', async () => {
+    // One row per page, so page 2 holds a single row that delete empties.
+    let rows = [
+      { id: 'a', name: 'salt' },
+      { id: 'b', name: 'sugar' },
+    ]
+    const size = 1
+    server.use(
+      http.get('/api/ingredients', ({ request }) => {
+        const page = Number(new URL(request.url).searchParams.get('page') ?? 0)
+        return HttpResponse.json({
+          content: rows.slice(page * size, page * size + size),
+          page: {
+            number: page,
+            size,
+            totalElements: rows.length,
+            totalPages: Math.max(1, Math.ceil(rows.length / size)),
+          },
+        })
+      }),
+      http.delete('/api/ingredients/:ingredientId', ({ params }) => {
+        rows = rows.filter((row) => row.id !== params.ingredientId)
+        return new HttpResponse(null, { status: 204 })
+      }),
+    )
+    renderPage()
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'sugar' }))
+    await screen.findByRole('dialog')
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm delete' }))
+
+    // Lands back on page 1 with data, not the empty-catalog message.
+    expect(await screen.findByText('salt')).toBeInTheDocument()
+    expect(screen.queryByText('The catalog is empty.')).not.toBeInTheDocument()
+  })
+
   it('keeps the photo and unit fields marked as not yet stored', async () => {
     renderPage()
     await screen.findByText('black pepper')
