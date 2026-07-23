@@ -78,6 +78,56 @@ State management — server state vs UI state:
   a decision to make when the pain is real, not before.
 - 2–3 levels of prop passing is normal; not a reason for global state.
 
+State placement — put it where the decision is made:
+
+- **State lives where the decision that reads it is made.** When two
+  components need the same fact, lift it to their nearest common parent rather
+  than duplicating it. State stranded below the component that must act on it
+  cannot be acted on: a dialog's `busy` flag kept inside the form could gate
+  the submit button but not the close paths owned by the parent `Dialog`, so
+  Escape / X / backdrop closed the dialog while the mutation kept running.
+- **Irreversible action (delete, payment) + an interruptible UI = ask what
+  happens to the in-flight request when the user closes or navigates away
+  mid-request.** The request does not cancel itself; decide deliberately
+  whether to block the exit or let the operation finish.
+- **While a request is in flight, every exit path must behave the same.**
+  Either all of them are blocked, or the operation survives the close and
+  reports its result somewhere that outlives the closed view (a toast, a
+  page-level banner). A half-guarded set — submit disabled, Escape not — lets
+  the user believe they cancelled an operation that still completes, and drops
+  the error on the floor because its only render target unmounted.
+
+Async mutation feedback — layers, then per-action choice:
+
+Two layers sit under every write, and only above them do individual actions
+differ. Do not reach for the fancy per-action pattern before the floor exists.
+
+- **Floor (always): a request timeout and a place for the result to land.**
+  The HTTP client carries a `timeout` so a stalled request settles as an error
+  instead of hanging forever — without it, any UI gated on a mutation's pending
+  state can lock permanently. Every mutation's success and failure must surface
+  somewhere that outlives the component that triggered it. The canonical spot is
+  the Query client's `MutationCache` (`onSuccess` / `onError`), which fires
+  regardless of whether the triggering component is still mounted; a callback
+  passed to `.mutate(vars, { onSuccess })` does **not** fire after its component
+  unmounts, so it must never be the only path that reports an error.
+- **Forms with server-side validation (create / edit): keep the form open
+  until success.** The form does not close on submit; it closes only in the
+  mutation's success path and renders the error inline on failure, so the typed
+  input is never lost to a round trip that a unique-name or similar check can
+  still reject. Closing on submit and reopening on error is a worse variant —
+  it flickers and it is more code. Gate every close path while the request is
+  in flight (see State placement above).
+- **Instant, low-risk actions (delete, toggle, reorder): optimistic update.**
+  The UI applies the change immediately against the Query cache, the request
+  flies in the background, and the change is rolled back from a snapshot only
+  if the server refuses (`onMutate` snapshots + writes, `onError` restores,
+  `onSettled` invalidates). This is a **frontend-only** pattern — the backend
+  receives the same request either way and stays the single source of truth;
+  `onSettled` reconciles. Apply it selectively, where instant feedback pays and
+  failure is rare — never blanket across every mutation, and not to creates
+  (no server-assigned id yet) or to forms whose validation must stay in view.
+
 API layer:
 
 - Contract = the backend OpenAPI spec. No hand-written service classes

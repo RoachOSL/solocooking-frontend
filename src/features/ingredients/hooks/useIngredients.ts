@@ -7,6 +7,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  type Query,
   type QueryKey,
 } from '@tanstack/react-query'
 import {
@@ -18,8 +19,13 @@ import {
 } from '@/shared/lib/api/__generated__/@tanstack/react-query.gen'
 import type {
   GetIngredientsData,
+  IngredientDto,
   SearchIngredientsData,
 } from '@/shared/lib/api/__generated__'
+
+// Both list endpoints return a PageResponse; only `content` matters for the
+// optimistic removal below, and spreading preserves the rest (page metadata).
+type IngredientListData = { content: IngredientDto[] }
 
 export type GetIngredientsParams = NonNullable<GetIngredientsData['query']>
 export type SearchIngredientsParams = Omit<
@@ -68,15 +74,58 @@ function useInvalidateIngredients() {
 
 export function useCreateIngredient() {
   const invalidate = useInvalidateIngredients()
-  return useMutation({ ...createIngredientMutation(), onSuccess: invalidate })
+  return useMutation({
+    ...createIngredientMutation(),
+    // The dialog form stays open and shows the error inline, so a global error
+    // toast would double it; success closes the form and confirms via toast.
+    meta: { successMessage: 'Ingredient added', toastError: false },
+    onSuccess: invalidate,
+  })
 }
 
 export function useUpdateIngredient() {
   const invalidate = useInvalidateIngredients()
-  return useMutation({ ...updateIngredientMutation(), onSuccess: invalidate })
+  return useMutation({
+    ...updateIngredientMutation(),
+    meta: { successMessage: 'Ingredient updated', toastError: false },
+    onSuccess: invalidate,
+  })
 }
 
 export function useDeleteIngredient() {
+  const queryClient = useQueryClient()
   const invalidate = useInvalidateIngredients()
-  return useMutation({ ...deleteIngredientMutation(), onSuccess: invalidate })
+  const listFilter = {
+    predicate: (query: Query) => isIngredientList(query.queryKey),
+  }
+  return useMutation({
+    ...deleteIngredientMutation(),
+    // Delete closes the dialog at once, so its only failure surface is a toast.
+    meta: { successMessage: 'Ingredient deleted' },
+    // Drop the row from every cached list immediately; restore from the
+    // snapshot if the server refuses (e.g. the ingredient is used by a recipe).
+    onMutate: async (variables) => {
+      const { ingredientId } = variables.path
+      await queryClient.cancelQueries(listFilter)
+      const snapshots =
+        queryClient.getQueriesData<IngredientListData>(listFilter)
+      for (const [key, data] of snapshots) {
+        if (!data) {
+          continue
+        }
+        queryClient.setQueryData<IngredientListData>(key, {
+          ...data,
+          content: data.content.filter((item) => item.id !== ingredientId),
+        })
+      }
+      return { snapshots }
+    },
+    onError: (_error, _variables, context) => {
+      context?.snapshots.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data)
+      })
+    },
+    // Reconcile page counts the optimistic filter did not recompute.
+    onSettled: invalidate,
+  })
 }

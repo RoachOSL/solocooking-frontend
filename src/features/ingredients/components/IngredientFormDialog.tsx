@@ -66,10 +66,12 @@ function IngredientForm({
   ingredient,
   initialName,
   onDone,
+  onBusyChange,
 }: {
   ingredient?: IngredientDto
   initialName: string
   onDone: () => void
+  onBusyChange: (busy: boolean) => void
 }) {
   const [name, setName] = useState(ingredient?.name ?? initialName)
   const [unit, setUnit] = useState('')
@@ -95,6 +97,13 @@ function IngredientForm({
   const saving = create.isPending || update.isPending
   const busy = saving || remove.isPending
   const unchanged = editing && normalized === ingredient.name
+
+  // A mutation cannot be cancelled once sent, so the parent gates every close
+  // path while it runs. Reset on unmount so a stale flag never locks a reopen.
+  useEffect(() => {
+    onBusyChange(busy)
+    return () => onBusyChange(false)
+  }, [busy, onBusyChange])
 
   const errorMessage = (remove.error ?? create.error ?? update.error)?.message
 
@@ -130,10 +139,10 @@ function IngredientForm({
       setConfirmingDelete(true)
       return
     }
-    remove.mutate(
-      { path: { ingredientId: ingredient.id } },
-      { onSuccess: onDone },
-    )
+    // Optimistic: the row leaves the list at once, so close now rather than
+    // waiting. Success and failure (with rollback) both report via toast.
+    remove.mutate({ path: { ingredientId: ingredient.id } })
+    onDone()
   }
 
   return (
@@ -234,7 +243,12 @@ function IngredientForm({
           <span />
         )}
         <div className="flex flex-col-reverse gap-2 sm:flex-row">
-          <Button type="button" variant="outline" onClick={onDone}>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={busy}
+            onClick={onDone}
+          >
             Cancel
           </Button>
           <Button
@@ -261,10 +275,24 @@ export function IngredientFormDialog({
   initialName?: string
 }) {
   const editing = ingredient !== undefined
+  const [busy, setBusy] = useState(false)
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        // Escape, backdrop and the X all route here; hold them shut mid-save.
+        if (!next && busy) {
+          return
+        }
+        onOpenChange(next)
+      }}
+    >
+      <DialogContent
+        showCloseButton={!busy}
+        onEscapeKeyDown={(event) => busy && event.preventDefault()}
+        onInteractOutside={(event) => busy && event.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>
             {editing ? 'Edit ingredient' : 'New ingredient'}
@@ -282,6 +310,7 @@ export function IngredientFormDialog({
           ingredient={ingredient}
           initialName={initialName}
           onDone={() => onOpenChange(false)}
+          onBusyChange={setBusy}
         />
       </DialogContent>
     </Dialog>

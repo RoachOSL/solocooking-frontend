@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
 import { PAGE_CONTAINER } from '@/shared/components/PageSection'
 import { Badge } from '@/shared/components/ui/badge'
+import { Toaster } from '@/shared/components/ui/sonner'
 import { cn } from '@/shared/lib/utils'
 import { GlobalLoadingBar } from './GlobalLoadingBar'
 import { CookEasterEgg } from './theme/CookEasterEgg'
@@ -118,6 +119,7 @@ export default function App() {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-48 bg-[radial-gradient(ellipse_at_bottom,color-mix(in_oklab,var(--color-primary)_16%,transparent),transparent_72%)]"
       />
+      <Toaster theme={theme} />
     </div>
   )
 }

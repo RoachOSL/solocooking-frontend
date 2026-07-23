@@ -29,6 +29,16 @@ facts and decisions belong in `PROJECT_NOTES.md`.
 - When a reusable architectural or engineering decision is agreed, record it
   in `ARCHITECTURE.md`. Record project-specific decisions in
   `PROJECT_NOTES.md`.
+- Clarifying questions go both ways. When a task is large, ambiguous, or
+  design-heavy, the assistant may ask a few pointed questions up front to fit
+  the work to the user's real needs — it is not only the user who asks. Keep
+  it to a small number, one topic at a time; never open with a flood of
+  questions. For small, obvious tasks, proceed on sensible defaults and state
+  the assumption instead of asking.
+- `ARCHITECTURE.md` is binding. Follow every decision recorded there; never
+  silently deviate from it or change established direction. When you believe a
+  recorded decision is wrong, raise it and ask first — do not change it, or act
+  against it, without asking.
 
 ## Code Review
 

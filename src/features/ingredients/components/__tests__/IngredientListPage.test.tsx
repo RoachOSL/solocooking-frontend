@@ -3,19 +3,23 @@
  */
 
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { delay, http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
+import { createQueryClient } from '@/shared/lib/api/queryClient'
+import { Toaster } from '@/shared/components/ui/sonner'
 import { server } from '@/test/msw/server'
 import { IngredientListPage } from '../IngredientListPage'
 
+// The real client + a mounted Toaster, so mutation outcomes surface through the
+// MutationCache exactly as they do in the app (delete reports via toast).
 function renderPage() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  })
+  const queryClient = createQueryClient()
+  queryClient.setDefaultOptions({ queries: { retry: false } })
   return render(
     <QueryClientProvider client={queryClient}>
       <IngredientListPage />
+      <Toaster />
     </QueryClientProvider>,
   )
 }
@@ -157,7 +161,7 @@ describe('IngredientListPage', () => {
     )
   })
 
-  it('explains a delete blocked by a recipe rather than reusing the name conflict copy', async () => {
+  it('rolls back an optimistic delete blocked by a recipe and reports why', async () => {
     server.use(
       http.delete('/api/ingredients/:ingredientId', () =>
         HttpResponse.json(
@@ -178,9 +182,14 @@ describe('IngredientListPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
     fireEvent.click(screen.getByRole('button', { name: 'Confirm delete' }))
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'A recipe uses this ingredient, so it cannot be deleted.',
-    )
+    // The failure surfaces as a toast, not an inline alert (the dialog is gone).
+    expect(
+      await screen.findByText(
+        'A recipe uses this ingredient, so it cannot be deleted.',
+      ),
+    ).toBeInTheDocument()
+    // Rollback: the optimistically removed row is back on the list.
+    expect(screen.getByText('olive oil')).toBeInTheDocument()
   })
 
   // A conflict the frontend has no URN for must not borrow another one's copy.
@@ -201,9 +210,11 @@ describe('IngredientListPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
     fireEvent.click(screen.getByRole('button', { name: 'Confirm delete' }))
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'That change conflicts with what the server already holds.',
-    )
+    expect(
+      await screen.findByText(
+        'That change conflicts with what the server already holds.',
+      ),
+    ).toBeInTheDocument()
   })
 
   it('keeps the photo and unit fields marked as not yet stored', async () => {
