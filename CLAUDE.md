@@ -39,6 +39,15 @@ facts and decisions belong in `PROJECT_NOTES.md`.
   silently deviate from it or change established direction. When you believe a
   recorded decision is wrong, raise it and ask first — do not change it, or act
   against it, without asking.
+- When the user asks a question and the reply grows into a real explanation (a
+  concept, a pattern, a why — not a one-line answer), capture it in
+  `ai-notes/LEARNING.md` as a dated entry and tell the user. Create the file if
+  it is missing. `ai-notes/` is gitignored local learning notes — keep it that
+  way; never commit it.
+- When the user floats a future plan, an idea, or something they would like to
+  add to the project (not to build right now), record it in
+  `ai-notes/BACKLOG.md` and tell the user. Keep it a parked idea, not scheduled
+  work — do not start on it unless asked.
 
 ## Code Review
 
