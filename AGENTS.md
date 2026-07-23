@@ -48,6 +48,11 @@ facts and decisions belong in `PROJECT_NOTES.md`.
   add to the project (not to build right now), record it in
   `ai-notes/BACKLOG.md` and tell the user. Keep it a parked idea, not scheduled
   work — do not start on it unless asked.
+- When the user asks for a plan — to design or think work through before
+  building it — write the plan to `ai-notes/plans/<short-kebab-topic>.md` and
+  tell the user. One file per plan; when the same work is re-planned, update
+  that file rather than adding a second. `ai-notes/` is gitignored local notes —
+  keep it that way; never commit it.
 
 ## Code Review
 
