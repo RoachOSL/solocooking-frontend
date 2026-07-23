@@ -11,8 +11,7 @@ import { Toaster } from '@/shared/components/ui/sonner'
 import { server } from '@/test/msw/server'
 import { IngredientListPage } from '../IngredientListPage'
 
-// The real client + a mounted Toaster, so mutation outcomes surface through the
-// MutationCache exactly as they do in the app (delete reports via toast).
+// Real client + Toaster so mutation outcomes surface as they do in the app.
 function renderPage() {
   const queryClient = createQueryClient()
   queryClient.setDefaultOptions({ queries: { retry: false } })
@@ -182,13 +181,12 @@ describe('IngredientListPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
     fireEvent.click(screen.getByRole('button', { name: 'Confirm delete' }))
 
-    // The failure surfaces as a toast, not an inline alert (the dialog is gone).
     expect(
       await screen.findByText(
         'A recipe uses this ingredient, so it cannot be deleted.',
       ),
     ).toBeInTheDocument()
-    // Rollback: the optimistically removed row is back on the list.
+    // Rollback: the optimistically removed row is back.
     expect(screen.getByText('olive oil')).toBeInTheDocument()
   })
 

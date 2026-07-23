@@ -23,8 +23,7 @@ import type {
   SearchIngredientsData,
 } from '@/shared/lib/api/__generated__'
 
-// Both list endpoints return a PageResponse; only `content` matters for the
-// optimistic removal below, and spreading preserves the rest (page metadata).
+// Only `content` matters for the optimistic removal; spreading keeps the rest.
 type IngredientListData = { content: IngredientDto[] }
 
 export type GetIngredientsParams = NonNullable<GetIngredientsData['query']>
@@ -76,8 +75,7 @@ export function useCreateIngredient() {
   const invalidate = useInvalidateIngredients()
   return useMutation({
     ...createIngredientMutation(),
-    // The dialog form stays open and shows the error inline, so a global error
-    // toast would double it; success closes the form and confirms via toast.
+    // Form shows the error inline, so suppress the global error toast.
     meta: { successMessage: 'Ingredient added', toastError: false },
     onSuccess: invalidate,
   })
@@ -100,10 +98,9 @@ export function useDeleteIngredient() {
   }
   return useMutation({
     ...deleteIngredientMutation(),
-    // Delete closes the dialog at once, so its only failure surface is a toast.
     meta: { successMessage: 'Ingredient deleted' },
-    // Drop the row from every cached list immediately; restore from the
-    // snapshot if the server refuses (e.g. the ingredient is used by a recipe).
+    // Optimistically drop the row; onError restores the snapshot if the server
+    // refuses (e.g. the ingredient is used by a recipe).
     onMutate: async (variables) => {
       const { ingredientId } = variables.path
       await queryClient.cancelQueries(listFilter)
@@ -125,7 +122,6 @@ export function useDeleteIngredient() {
         queryClient.setQueryData(key, data)
       })
     },
-    // Reconcile page counts the optimistic filter did not recompute.
     onSettled: invalidate,
   })
 }

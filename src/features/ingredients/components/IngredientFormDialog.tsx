@@ -98,8 +98,7 @@ function IngredientForm({
   const busy = saving || remove.isPending
   const unchanged = editing && normalized === ingredient.name
 
-  // A mutation cannot be cancelled once sent, so the parent gates every close
-  // path while it runs. Reset on unmount so a stale flag never locks a reopen.
+  // Reset on unmount so a stale busy flag never locks a reopen.
   useEffect(() => {
     onBusyChange(busy)
     return () => onBusyChange(false)
@@ -139,8 +138,7 @@ function IngredientForm({
       setConfirmingDelete(true)
       return
     }
-    // Optimistic: the row leaves the list at once, so close now rather than
-    // waiting. Success and failure (with rollback) both report via toast.
+    // Optimistic delete: close now, the toast reports success or failure.
     remove.mutate({ path: { ingredientId: ingredient.id } })
     onDone()
   }
@@ -281,7 +279,7 @@ export function IngredientFormDialog({
     <Dialog
       open={open}
       onOpenChange={(next) => {
-        // Escape, backdrop and the X all route here; hold them shut mid-save.
+        // Escape, backdrop and X all route here; hold them shut mid-save.
         if (!next && busy) {
           return
         }

@@ -4,10 +4,7 @@
 
 import { Toaster as Sonner, type ToasterProps } from 'sonner'
 
-// Theme is passed in by the app layer (App reads it) rather than pulled from a
-// theme hook here — shared/ must not import from app/. Toasts are styled to the
-// design tokens so all three palettes and both modes are covered without
-// branching.
+// Theme comes in as a prop: shared/ must not import the app's theme hook.
 export function Toaster(props: ToasterProps) {
   return (
     <Sonner
