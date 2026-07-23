@@ -6,6 +6,14 @@ workflow rules live in `CLAUDE.md` / `AGENTS.md`. When a reusable
 architectural or engineering decision is agreed, add it here in the relevant
 section.
 
+## Engineering principles
+
+- Favor the cleanest, most idiomatic solution the language and stack allow.
+  Reach for the best-practice approach by default — clear names, small focused
+  units, standard patterns over clever ones, no dead or duplicated code — and
+  step down from it only for a concrete, stated reason (a real constraint or a
+  measured cost). "It works" is the floor, not the goal.
+
 ## Repository hygiene
 
 - Do not add AI attribution anywhere in the repository or its Git history.
@@ -77,6 +85,14 @@ State management — server state vs UI state:
 - No Redux. Zustand only if shared UI state becomes painful to thread —
   a decision to make when the pain is real, not before.
 - 2–3 levels of prop passing is normal; not a reason for global state.
+- One query observer per view. Do not mount an inactive query that keeps
+  refetching (on focus, after a mutation) beside the visible one; switch a
+  single observer's options — browse vs search — so only one request is ever in
+  flight and `keepPreviousData` bridges the change without a skeleton flash.
+- A query that has not succeeded is not evidence. Reading "no match, so the name
+  is free" or "the list is empty" off `data` while the query is loading or
+  errored asserts a fact you have not proven — gate on `isSuccess && !isFetching`
+  and let the server's authoritative response (a 409) be the final word.
 
 State placement — put it where the decision is made:
 
@@ -238,6 +254,24 @@ Loading feedback — three jobs, three answers:
 - Placeholder counts are a layout question, so CSS answers them — render the
   full set and hide what does not fit each breakpoint. One fixed number cannot
   serve a phone and a desktop.
+
+Accessibility — baseline on every screen, not a later pass:
+
+- **Motion respects `prefers-reduced-motion`.** Every animation — dialog
+  enter/exit, hover transforms, the COOK! flash, background embers — carries a
+  `motion-reduce:` off switch (`motion-reduce:animate-none` /
+  `motion-reduce:transition-none`) or a static variant. The reduced-motion user
+  gets the same information without the movement.
+- **Controls meet WCAG contrast.** Text reaches 4.5:1 (3:1 for large text) and
+  the focus ring reaches 3:1 — use the full `ring-ring`, never a faded
+  `ring-ring/50`. Fix contrast by pointing at a different token, never by
+  editing a palette value (PROJECT_NOTES "Palette changes need approval").
+- **Client-side navigation is announced.** A route change gives no browser cue,
+  so the shell sets a per-route `document.title` (from route `handle.title` via
+  `useMatches`), moves focus to `<main>`, and pushes the page name into an
+  `aria-live` region. A new route opts in by adding `handle.title`.
+- **Focus stays visible and everything is reachable and labelled** — `aria-label`
+  on icon-only controls, `sr-only` text behind status regions and spinners.
 
 Known traps (do not do):
 

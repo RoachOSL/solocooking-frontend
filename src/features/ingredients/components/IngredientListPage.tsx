@@ -18,7 +18,7 @@ import {
   SKELETON_WIDTHS,
   skeletonVisibility,
 } from '../catalogGrid'
-import { useIngredientSearch, useIngredients } from '../hooks/useIngredients'
+import { useIngredientCatalog } from '../hooks/useIngredients'
 import { normalizeName } from '../normalizeName'
 import { IngredientFormDialog } from './IngredientFormDialog'
 
@@ -54,18 +54,36 @@ export function IngredientListPage() {
   const debouncedTerm = useDebouncedValue(term)
 
   const searching = debouncedTerm.trim().length > 0
-  const list = useIngredients({ page, size: PAGE_SIZE })
-  const search = useIngredientSearch(debouncedTerm, { page, size: PAGE_SIZE })
-  const { data, isPending, isError, error, refetch, isPlaceholderData } =
-    searching ? search : list
+  const catalog = useIngredientCatalog(debouncedTerm, { page, size: PAGE_SIZE })
+  const {
+    data,
+    isPending,
+    isError,
+    error,
+    refetch,
+    isPlaceholderData,
+    isSuccess,
+    isFetching,
+  } = catalog
+
+  // Optimistic delete can leave the page past the end; correct during render
+  // so the empty page never commits.
+  if (!isPlaceholderData && data) {
+    const lastPage = Math.max(0, data.page.totalPages - 1)
+    if (page > lastPage) {
+      setPage(lastPage)
+    }
+  }
 
   const normalized = normalizeName(term)
-  // Offer the name only once the search that would have found it has settled,
-  // so the button cannot suggest adding something already on screen.
+  // A failed or in-flight search is not proof the name is free; the 409 on
+  // create stays the final word.
   const canAdd =
+    searching &&
     normalized.length > 0 &&
     normalizeName(debouncedTerm) === normalized &&
-    !search.isFetching &&
+    isSuccess &&
+    !isFetching &&
     !data?.content.some((ingredient) => ingredient.name === normalized)
 
   function handleTermChange(value: string) {

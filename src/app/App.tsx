@@ -2,8 +2,15 @@
  * Copyright (c) 2026 dev.soloprogramming
  */
 
-import { useState } from 'react'
-import { Link, NavLink, Outlet } from 'react-router'
+import { useEffect, useRef, useState } from 'react'
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useMatches,
+  type UIMatch,
+} from 'react-router'
 import { PAGE_CONTAINER } from '@/shared/components/PageSection'
 import { Badge } from '@/shared/components/ui/badge'
 import { Toaster } from '@/shared/components/ui/sonner'
@@ -32,6 +39,19 @@ function navLinkClass({ isActive }: { isActive: boolean }) {
   )
 }
 
+type RouteHandle = { title?: string }
+
+// Deepest matched route with a title wins.
+function routeTitle(matches: UIMatch[]): string | undefined {
+  for (let index = matches.length - 1; index >= 0; index--) {
+    const handle = matches[index].handle as RouteHandle | undefined
+    if (handle?.title) {
+      return handle.title
+    }
+  }
+  return undefined
+}
+
 export default function App() {
   // index.html already applied the stored palette; this only mirrors it.
   const [palette, setPalette] = useState<PaletteValue>(readPalette)
@@ -40,6 +60,27 @@ export default function App() {
     () => localStorage.getItem('embers') !== 'off',
   )
   const embers = EMBER_PRESETS[palette]
+
+  const matches = useMatches()
+  const { pathname } = useLocation()
+  const title = routeTitle(matches)
+  const mainRef = useRef<HTMLElement>(null)
+  const [announcement, setAnnouncement] = useState('')
+  const isFirstRender = useRef(true)
+
+  useEffect(() => {
+    document.title = title ? `${title} · SoloCooking` : 'SoloCooking'
+  }, [title])
+
+  // No browser cue on a client-side route change: move focus and announce it.
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    mainRef.current?.focus()
+    setAnnouncement(title ?? 'Page changed')
+  }, [pathname, title])
 
   function changePalette(next: PaletteValue) {
     applyPalette(next)
@@ -110,7 +151,11 @@ export default function App() {
         <GlobalLoadingBar />
       </header>
       {/* pb-24 keeps the last block clear of the glow below. */}
-      <main className="relative z-10 flex-1 pb-24">
+      <main
+        ref={mainRef}
+        tabIndex={-1}
+        className="relative z-10 flex-1 pb-24 outline-none"
+      >
         <Outlet />
       </main>
       {/* Anchored to the shell rather than the viewport, so it sits at the foot
@@ -120,6 +165,9 @@ export default function App() {
         className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-48 bg-[radial-gradient(ellipse_at_bottom,color-mix(in_oklab,var(--color-primary)_16%,transparent),transparent_72%)]"
       />
       <Toaster theme={theme} />
+      <div aria-live="polite" aria-atomic className="sr-only">
+        {announcement}
+      </div>
     </div>
   )
 }

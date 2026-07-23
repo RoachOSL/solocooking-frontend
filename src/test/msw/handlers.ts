@@ -44,15 +44,28 @@ export function resetIngredients() {
   ingredients = [...seededIngredients]
 }
 
-function pageOf(content: IngredientDto[]): PageResponseIngredientDto {
+function pageOf(
+  all: IngredientDto[],
+  page = 0,
+  size = 30,
+): PageResponseIngredientDto {
+  const start = page * size
   return {
-    content,
+    content: all.slice(start, start + size),
     page: {
-      number: 0,
-      size: 24,
-      totalElements: content.length,
-      totalPages: 1,
+      number: page,
+      size,
+      totalElements: all.length,
+      totalPages: Math.max(1, Math.ceil(all.length / size)),
     },
+  }
+}
+
+function pageParams(request: Request): { page: number; size: number } {
+  const url = new URL(request.url)
+  return {
+    page: Number(url.searchParams.get('page') ?? 0),
+    size: Number(url.searchParams.get('size') ?? 30),
   }
 }
 
@@ -65,14 +78,18 @@ export const handlers = [
     return HttpResponse.json(body)
   }),
 
-  http.get('/api/ingredients', () => HttpResponse.json(pageOf(ingredients))),
+  http.get('/api/ingredients', ({ request }) => {
+    const { page, size } = pageParams(request)
+    return HttpResponse.json(pageOf(ingredients, page, size))
+  }),
 
   http.get('/api/ingredients/search', ({ request }) => {
     const name = new URL(request.url).searchParams.get('name') ?? ''
+    const { page, size } = pageParams(request)
     const matches = ingredients.filter((ingredient) =>
       ingredient.name.includes(name.trim().toLowerCase()),
     )
-    return HttpResponse.json(pageOf(matches))
+    return HttpResponse.json(pageOf(matches, page, size))
   }),
 
   http.post('/api/ingredients', async ({ request }) => {

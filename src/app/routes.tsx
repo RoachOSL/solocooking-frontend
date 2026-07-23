@@ -15,11 +15,27 @@ export const router = createBrowserRouter([
     element: <App />,
     errorElement: <RouteErrorPage />,
     children: [
-      { index: true, element: <HomePage /> },
-      { path: 'recipes', element: <RecipeListPage /> },
-      { path: 'recipes/:id', element: <RecipeDetailPage /> },
-      { path: 'ingredients', element: <IngredientListPage /> },
-      { path: '*', element: <RouteErrorPage /> },
+      { index: true, element: <HomePage />, handle: { title: 'Home' } },
+      {
+        path: 'recipes',
+        element: <RecipeListPage />,
+        handle: { title: 'Recipes' },
+      },
+      {
+        path: 'recipes/:id',
+        element: <RecipeDetailPage />,
+        handle: { title: 'Recipe' },
+      },
+      {
+        path: 'ingredients',
+        element: <IngredientListPage />,
+        handle: { title: 'Ingredients' },
+      },
+      {
+        path: '*',
+        element: <RouteErrorPage />,
+        handle: { title: 'Not found' },
+      },
     ],
   },
 ])
